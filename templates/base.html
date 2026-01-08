@@ -1,0 +1,618 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraStudio | Gestión Inmobiliaria & Topografía</title>
+    <link rel="icon" href="{% static 'img/logo-icono.png' %}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        /* ESTILOS GLOBALES */
+        .bg-technical { background-color: #2C3E50; }
+        .text-technical { color: #2C3E50; }
+        .nav-link { font-weight: 500; color: #2C3E50 !important; margin-right: 15px; }
+        .nav-link:hover { color: #198754 !important; }
+        .nav-link.active { color: #198754 !important; font-weight: 700; }
+
+        .btn-terra-outline { color: #2C3E50; border-color: #2C3E50; }
+        .btn-terra-outline:hover { background-color: #198754; border-color: #198754; color: white; }
+        
+        .footer-link { text-decoration: none; color: rgba(255, 255, 255, 0.75) !important; transition: color 0.2s ease; }
+        .footer-link:hover { color: #198754 !important; }
+        
+        .social-icon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background-color: rgba(255, 255, 255, 0.1); color: white; border-radius: 50%; text-decoration: none; transition: all 0.3s ease; }
+        .social-icon:hover { background-color: #198754; color: white; transform: translateY(-3px); }
+        .ls-1 { letter-spacing: 1px; }
+
+        /* ESTILOS DEL WIZARD (CONTACTO) */
+        .transition-all { transition: all 0.3s ease; }
+        .hover-scale:hover { transform: scale(1.02); }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .icon-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        
+        .btn-option { background: white; border-color: #dee2e6; }
+        .btn-option:hover { border-color: #198754; background-color: #f8fffb; }
+        .btn-option.active { background-color: #e9f7ef; border-color: #198754; border-width: 2px; }
+        .btn-option.active .icon-circle { background-color: #198754 !important; color: white !important; }
+
+        .btn-channel { background: white; color: #555; }
+        .btn-channel:hover { border-color: #198754; color: #198754; }
+        .btn-channel.active { background-color: #198754; color: white; border-color: #198754; }
+
+        .vertical-line { width: 2px; height: 30px; background-color: #dee2e6; }
+
+        /* ESTILOS RECURSOS & CARDS */
+        .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important; }
+        .img-zoom { transition: transform 0.5s ease; }
+        .hover-card:hover .img-zoom { transform: scale(1.05); }
+        .stretched-link::after { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; content: ""; }
+
+        /* ESTILOS DEL BOTÓN WHATSAPP (Avanzado) */
+        .btn-whatsapp-trigger {
+            background-color: #25D366; 
+            border: none;
+            transition: all 0.3s ease;
+            color: white;
+            position: relative;
+            z-index: 1002;
+        }
+        
+        .btn-whatsapp-trigger:hover {
+            background-color: #1DA851; 
+            transform: scale(1.05);    
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4) !important;
+        }
+
+        .btn-whatsapp-real {
+            background-color: #25D366;
+            transition: background-color 0.2s;
+        }
+        .btn-whatsapp-real:hover {
+            background-color: #1DA851;
+        }
+
+        /* ESTILOS DEL GLOBO (SPEECH BUBBLE) */
+        #whatsapp-tooltip {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-color: white;
+            color: #333;
+            /* IMPORTANTE: Quitamos box-shadow para usar filter */
+            box-shadow: none !important;
+            /* El filtro dibuja la sombra alrededor de la forma combinada (globo + flecha) */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            z-index: 1001;
+            /* Hacemos espacio para que la flecha no toque el botón verde */
+            margin-right: 14px; 
+            overflow: visible !important;
+        }
+
+        /* LA FLECHA (TRIÁNGULO INVASOR) */
+        #whatsapp-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            /* TRUCO MAESTRO: */
+            /* En lugar de 100%, usamos calc() para meter la flecha 1px DENTRO del globo */
+            left: calc(100% - 1px); 
+            margin-top: -6px;
+            border-width: 6px;
+            border-style: solid;
+            /* La flecha apunta a la derecha */
+            border-color: transparent transparent transparent white;
+        }
+
+        /* AL HACER HOVER */
+        #whatsapp-widget:hover #whatsapp-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        
+        .chat-is-open #whatsapp-tooltip {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-md navbar-light bg-white sticky-top shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}" style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 1.6rem; letter-spacing: -0.5px;">
+                <img src="{% static 'img/logo-icono.png' %}" alt="TerraStudio" height="60" class="me-1">
+                <div class="lh-1">
+                    <span style="color: #2C3E50; font-weight: 800;">Terra</span><span style="color: #198754; font-weight: 400;">Studio</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'servicios' %}">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'catalogo' %}">Propiedades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#recursos">Recursos</a></li>
+                    <li class="nav-item ms-md-3 mt-3 mt-md-0">
+                        <a class="btn btn-terra-outline px-4 rounded-pill" href="#contacto-interactivo">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% if propiedades and not is_catalog_page %}
+    <section class="py-5 bg-light border-top">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h6 class="text-success fw-bold text-uppercase ls-2 small">Oportunidades Recientes</h6>
+                    <h2 class="fw-bold text-technical">Propiedades Destacadas</h2>
+                </div>
+                
+                <a href="{% url 'catalogo' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold small d-none d-md-inline-flex align-items-center">
+                    Ver Catálogo Completo <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% load humanize %}
+                {% for prop in propiedades %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 hover-lift">
+                        <div class="position-relative overflow-hidden rounded-top">
+                            {% if prop.imagen_principal %}
+                                <img src="{{ prop.imagen_principal.imagen.url }}" class="card-img-top" alt="{{ prop.titulo }}" style="height: 220px; object-fit: cover;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/400x300" class="card-img-top" style="height: 220px; object-fit: cover;">
+                            {% endif %}
+                            <span class="position-absolute top-0 start-0 badge bg-dark opacity-75 m-3">{{ prop.get_tipo_display }}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-technical mb-1 text-truncate">{{ prop.titulo }}</h5>
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ prop.comuna }}</p>
+                            <h5 class="fw-bold text-success mb-0">{{ prop.precio_formateado }}</h5>
+                        </div>
+                        <div class="card-footer bg-white border-0 p-3">
+                            <a href="{% url 'detalle_propiedad' prop.slug %}" onclick="event.preventDefault(); abrirModalPropiedad(this.href);" class="btn btn-outline-primary w-100 rounded-pill fw-bold btn-sm">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-block d-md-none text-center mt-4">
+                <a href="{% url 'catalogo' %}" class="btn btn-outline-dark rounded-pill w-100 fw-bold">Ver Catálogo Completo</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="py-5 bg-light" id="contacto-interactivo">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h3 class="fw-bold text-technical">¿Tienes un proyecto en mente?</h3>
+                <p class="text-muted mx-auto" style="max-width: 700px;">
+                    Cada caso es único. Ponte en contacto con nosotros y cuéntanos tu proyecto, queremos brindarte el asesoramiento exacto que necesitas.
+                </p>
+                <h5 class="text-success fw-bold mt-4">Selecciona el área de tu interés:</h5>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm position-relative">
+                        
+                        <div class="row g-3 justify-content-center" id="step-1">
+                            <div class="col-6 col-md-3">
+                                <button class="btn-option w-100 h-100 p-3 rounded-4 border text-center transition-all" onclick="selectCategory(this, 'inmobiliaria')">
+                                    <div class="icon-circle mb-3 mx-auto bg-light text-technical"><i class="bi bi-house-door-fill fs-3"></i></div>
+                                    <span class="fw-bold small d-block">Operaciones Inmobiliarias</span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-option w-100 h-100 p-3 rounded-4 border text-center transition-all" onclick="selectCategory(this, 'topografia')">
+                                    <div class="icon-circle mb-3 mx-auto bg-light text-technical"><i class="bi bi-layers-half fs-3"></i></div>
+                                    <span class="fw-bold small d-block">Ingeniería y Topografía</span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-option w-100 h-100 p-3 rounded-4 border text-center transition-all" onclick="selectCategory(this, 'legal')">
+                                    <div class="icon-circle mb-3 mx-auto bg-light text-technical"><i class="bi bi-file-earmark-text fs-3"></i></div>
+                                    <span class="fw-bold small d-block">Legal y Regularización</span>
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-option w-100 h-100 p-3 rounded-4 border text-center transition-all" onclick="selectCategory(this, 'tasaciones')">
+                                    <div class="icon-circle mb-3 mx-auto bg-light text-technical"><i class="bi bi-graph-up-arrow fs-3"></i></div>
+                                    <span class="fw-bold small d-block">Tasaciones</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="connector-1" class="text-center py-3 d-none fade-in">
+                            <div class="vertical-line mx-auto"></div>
+                            <span class="badge bg-light text-muted border px-3 py-2 rounded-pill mt-2">Específicamente busco:</span>
+                        </div>
+
+                        <div class="row g-3 justify-content-center d-none fade-in" id="step-2"></div>
+
+                        <div id="connector-2" class="text-center py-3 d-none fade-in">
+                            <div class="vertical-line mx-auto"></div>
+                            <span class="badge bg-light text-muted border px-3 py-2 rounded-pill mt-2">Prefiero contactar por:</span>
+                        </div>
+
+                        <div class="row g-3 justify-content-center d-none fade-in" id="step-3">
+                            <div class="col-6 col-md-3">
+                                <button class="btn-channel w-100 p-2 rounded-pill border text-center transition-all" onclick="selectChannel(this, 'videollamada')"><i class="bi bi-camera-video me-2"></i> Videollamada</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-channel w-100 p-2 rounded-pill border text-center transition-all" onclick="selectChannel(this, 'presencial')"><i class="bi bi-people me-2"></i> Presencial</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-channel w-100 p-2 rounded-pill border text-center transition-all" onclick="selectChannel(this, 'email')"><i class="bi bi-envelope me-2"></i> Correo</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <button class="btn-channel w-100 p-2 rounded-pill border text-center transition-all" onclick="selectChannel(this, 'whatsapp')"><i class="bi bi-whatsapp me-2"></i> WhatsApp</button>
+                            </div>
+                        </div>
+
+                        <div id="connector-3" class="text-center py-3 d-none fade-in">
+                            <div class="vertical-line mx-auto"></div>
+                        </div>
+
+                        <div class="row justify-content-center d-none fade-in" id="step-4">
+                            <div class="col-md-8">
+                                <div class="card bg-light border-0 p-4 rounded-4 text-center">
+                                    <h5 class="fw-bold text-technical mb-3">¡Perfecto!</h5>
+                                    <p class="small text-muted mb-4">Déjanos tus datos para hablar sobre <span id="summary-text" class="fw-bold text-success">tu proyecto</span>.</p>
+                                    
+                                    <form action="#" method="POST">
+                                        <div class="row g-3 text-start">
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold text-technical">Nombre *</label>
+                                                <input type="text" class="form-control rounded-3" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold text-technical">Teléfono / WhatsApp *</label>
+                                                <input type="tel" class="form-control rounded-3" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-bold text-technical" id="label-email">Correo Electrónico (Opcional)</label>
+                                                <input type="email" class="form-control rounded-3" id="input-email">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-bold text-technical">Detalles adicionales (Opcional)</label>
+                                                <textarea class="form-control rounded-3" rows="3"></textarea>
+                                            </div>
+                                            <div class="col-12 mt-4">
+                                                <button type="button" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm hover-scale">
+                                                    Enviar Solicitud <i class="bi bi-send ms-2"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white border-top" id="recursos">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-5">
+                <div>
+                    <h6 class="text-success fw-bold text-uppercase ls-2 small">Conocimiento Experto</h6>
+                    <h2 class="fw-bold text-technical">Guía y Actualidad</h2>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="overflow-hidden rounded-top position-relative">
+                            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800" class="card-img-top img-zoom" style="height: 200px; object-fit: cover;">
+                            <span class="badge bg-technical position-absolute top-0 start-0 m-3">Técnico</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <small class="text-muted d-block mb-2"><i class="bi bi-calendar3 me-1"></i> Enero 2026</small>
+                            <h5 class="fw-bold text-technical mb-3">¿Por qué medir antes de comprar?</h5>
+                            <p class="text-muted small mb-4">Descubre cómo un levantamiento topográfico te protege de conflictos y problemas legales.</p>
+                            <a href="#" class="text-success fw-bold text-decoration-none stretched-link">Leer Artículo <i class="bi bi-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="overflow-hidden rounded-top position-relative">
+                            <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800" class="card-img-top img-zoom" style="height: 200px; object-fit: cover;">
+                            <span class="badge bg-success position-absolute top-0 start-0 m-3">Legal</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <small class="text-muted d-block mb-2"><i class="bi bi-calendar3 me-1"></i> Diciembre 2025</small>
+                            <h5 class="fw-bold text-technical mb-3">Estudio de Títulos: Tu seguro.</h5>
+                            <p class="text-muted small mb-4">No basta con que el vendedor diga que es dueño. Explicamos el proceso de revisión.</p>
+                            <a href="#" class="text-success fw-bold text-decoration-none stretched-link">Leer Artículo <i class="bi bi-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="overflow-hidden rounded-top position-relative">
+                            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800" class="card-img-top img-zoom" style="height: 200px; object-fit: cover;">
+                            <span class="badge bg-secondary position-absolute top-0 start-0 m-3">Historia</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <small class="text-muted d-block mb-2"><i class="bi bi-calendar3 me-1"></i> Noviembre 2025</small>
+                            <h5 class="fw-bold text-technical mb-3">30 Años en Tomé.</h5>
+                            <p class="text-muted small mb-4">Desde las primeras mediciones manuales hasta el uso de drones. Conoce nuestra evolución.</p>
+                            <a href="#" class="text-success fw-bold text-decoration-none stretched-link">Leer Artículo <i class="bi bi-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // DATOS DE SUB-SERVICIOS
+        const subOpciones = {
+            'inmobiliaria': [
+                {icon: 'bi-house-check', text: 'Quiero Comprar'},
+                {icon: 'bi-currency-dollar', text: 'Quiero Vender'},
+                {icon: 'bi-key', text: 'Gestión / Arriendo'}
+            ],
+            'topografia': [
+                {icon: 'bi-geo', text: 'Topografía General'},
+                {icon: 'bi-grid-3x3', text: 'Subdivisión (Rural/Urbana)'},
+                {icon: 'bi-airplane', text: 'Fotogrametría / Drones'}
+            ],
+            'legal': [
+                {icon: 'bi-file-earmark-check', text: 'Regularización Terreno'},
+                {icon: 'bi-search', text: 'Estudio de Títulos'},
+                {icon: 'bi-journal-text', text: 'Asesoría Legal General'}
+            ],
+            'tasaciones': [
+                {icon: 'bi-shop', text: 'Tasación Comercial'},
+                {icon: 'bi-tree', text: 'Tasación Agrícola'},
+                {icon: 'bi-clipboard-data', text: 'Tasación Bancaria'}
+            ]
+        };
+
+        let categoriaSeleccionada = '';
+        let subServicioSeleccionado = '';
+
+        function selectCategory(btn, categoria) {
+            document.querySelectorAll('#step-1 .btn-option').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            categoriaSeleccionada = categoria;
+
+            const step2Div = document.getElementById('step-2');
+            step2Div.innerHTML = ''; 
+            
+            subOpciones[categoria].forEach(opcion => {
+                const col = document.createElement('div');
+                col.className = 'col-6 col-md-4';
+                col.innerHTML = `
+                    <button class="btn-channel w-100 p-3 rounded-pill border text-center transition-all" onclick="selectSubService(this, '${opcion.text}')">
+                        <i class="bi ${opcion.icon} me-2"></i> ${opcion.text}
+                    </button>
+                `;
+                step2Div.appendChild(col);
+            });
+
+            document.getElementById('connector-1').classList.remove('d-none');
+            step2Div.classList.remove('d-none');
+            
+            document.getElementById('connector-2').classList.add('d-none');
+            document.getElementById('step-3').classList.add('d-none');
+            document.getElementById('connector-3').classList.add('d-none');
+            document.getElementById('step-4').classList.add('d-none');
+
+            setTimeout(() => document.getElementById('step-2').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        function selectSubService(btn, nombreServicio) {
+            document.querySelectorAll('#step-2 button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            subServicioSeleccionado = nombreServicio;
+
+            document.getElementById('connector-2').classList.remove('d-none');
+            document.getElementById('step-3').classList.remove('d-none');
+            setTimeout(() => document.getElementById('step-3').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        function selectChannel(btn, canal) {
+            document.querySelectorAll('#step-3 .btn-channel').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.getElementById('summary-text').innerText = subServicioSeleccionado;
+
+            const labelEmail = document.getElementById('label-email');
+            const inputEmail = document.getElementById('input-email');
+            if (canal === 'email') {
+                labelEmail.innerText = "Correo Electrónico (Requerido)";
+                inputEmail.required = true;
+            } else {
+                labelEmail.innerText = "Correo Electrónico (Opcional)";
+                inputEmail.required = false;
+            }
+
+            document.getElementById('connector-3').classList.remove('d-none');
+            document.getElementById('step-4').classList.remove('d-none');
+            setTimeout(() => document.getElementById('step-4').scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+    </script>
+
+    <footer class="bg-technical text-white pt-5 pb-3 mt-auto">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 mb-3 mb-lg-0">
+                    <a class="d-flex align-items-center text-white text-decoration-none mb-3" href="{% url 'inicio' %}">
+                        <img src="{% static 'img/logo-icono.png' %}" alt="TerraStudio" height="40" class="me-2" style="filter: brightness(0) invert(1);"> 
+                        <div class="lh-1">
+                            <span class="fw-bold">Terra</span><span class="fw-light">Studio</span>
+                        </div>
+                    </a>
+                    <p class="text-white-50 small pe-lg-5">
+                        Gestión inmobiliaria con respaldo topográfico en Tomé y alrededores. Transformamos problemas complejos en soluciones claras desde 2013.
+                    </p>
+                </div>
+                <div class="col-6 col-sm-4 col-lg-2 mb-3 mb-sm-0">
+                    <h5 class="fw-bold mb-3">Navegación</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <a href="{% url 'inicio' %}" class="footer-link">Inicio</a>
+                        </li>
+                        
+                        <li class="mb-2">
+                            <a href="{% url 'catalogo' %}" class="footer-link">Propiedades</a>
+                        </li>
+                        
+                        <li class="mb-2">
+                            <a href="{% url 'servicios' %}" class="footer-link">Servicios</a>
+                        </li>
+                        
+                        <li class="mb-2">
+                            <a href="{% url 'nosotros' %}" class="footer-link">Nosotros</a>
+                        </li>
+                        
+                        <li class="mb-2">
+                            <a href="#recursos" class="footer-link">Recursos</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-6 col-sm-4 col-lg-3 mb-3 mb-sm-0">
+                    <h5 class="fw-bold mb-3">Contacto</h5>
+                    <ul class="list-unstyled small text-white-50">
+                        <li class="mb-3 d-flex">
+                            <i class="bi bi-geo-alt-fill text-success me-3 mt-1"></i>
+                            <span>Oficina Central, Tomé,<br>Región del Biobío, Chile.</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-whatsapp text-success me-3 fs-5"></i>
+                            <a href="https://wa.me/56912345678" target="_blank" class="footer-link text-white">+56 9 1234 5678</a>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="bi bi-envelope-fill text-success me-3"></i>
+                            <a href="mailto:contacto@terrastudio.cl" class="footer-link text-white">contacto@terrastudio.cl</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-4 col-lg-3">
+                    <h5 class="fw-bold mb-3">Síguenos</h5>
+                    <div class="d-flex mb-4">
+                        <a href="#" class="social-icon me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-tiktok"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-youtube"></i></a>
+                    </div>
+                    <h6 class="fw-bold mb-2 small text-white-50 text-uppercase ls-1">Certificaciones</h6>
+                    <div class="bg-white p-2 rounded d-inline-block opacity-75">
+                        <img src="https://via.placeholder.com/100x50?text=SOCIO+CChC" alt="Certificación" height="40">
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <small class="text-white-50">&copy; 2026 TerraStudio. Todos los derechos reservados.</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div id="whatsapp-widget" class="position-fixed bottom-0 end-0 m-4" style="z-index: 1000;">
+        
+        <div id="whatsapp-tooltip" class="bg-white shadow-sm rounded-pill px-3 py-2 mb-2 position-absolute end-100 me-2 d-flex align-items-center" 
+             style="top: 10px; width: max-content;">
+            <span class="small fw-bold text-dark">¿Necesitas ayuda?</span>
+        </div>
+
+        <div id="whatsapp-chat-window" class="card shadow border-0 mb-3 d-none" 
+             style="width: 300px; position: absolute; bottom: 70px; right: 0; overflow: hidden; border-radius: 15px;">
+            
+            <div class="card-header text-white p-3 d-flex align-items-center" style="background-color: #075E54;">
+                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <img src="{% static 'img/logo-icono.png' %}" alt="TerraStudio" width="30">
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">TerraStudio</h6>
+                    <small style="font-size: 0.75rem;">Responde en menos de 1h</small>
+                </div>
+                <button type="button" class="btn-close btn-close-white ms-auto" aria-label="Close" onclick="toggleWhatsapp()"></button>
+            </div>
+
+            <div class="card-body bg-light p-4" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');">
+                <div class="bg-white p-2 rounded-3 shadow-sm d-inline-block text-dark small" style="border-top-left-radius: 0 !important;">
+                    Hola 👋 <br>Si tienes alguna consulta sobre un terreno, estamos aquí para ayudarte.
+                </div>
+                <div class="text-muted text-end mt-1" style="font-size: 0.7rem;">Justo ahora</div>
+            </div>
+
+            <div class="card-footer bg-white border-0 p-3">
+                <a href="https://wa.me/56912345678?text=Hola,%20vengo%20de%20la%20web%20y%20tengo%20una%20consulta." target="_blank" class="btn w-100 rounded-pill fw-bold text-white d-flex align-items-center justify-content-center btn-whatsapp-real">
+                    <i class="bi bi-whatsapp me-2 fs-5"></i> Iniciar Chat
+                </a>
+            </div>
+        </div>
+
+        <button onclick="toggleWhatsapp()" class="btn rounded-circle shadow d-flex align-items-center justify-content-center btn-whatsapp-trigger" 
+                style="width: 60px; height: 60px;">
+            <i class="bi bi-whatsapp text-white display-6"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleWhatsapp() {
+            var chatWindow = document.getElementById('whatsapp-chat-window');
+            var widgetContainer = document.getElementById('whatsapp-widget');
+            
+            if (chatWindow.classList.contains('d-none')) {
+                chatWindow.classList.remove('d-none');
+                widgetContainer.classList.add('chat-is-open'); 
+            } else {
+                chatWindow.classList.add('d-none');
+                widgetContainer.classList.remove('chat-is-open');
+            }
+        }
+    </script>
+    
+    <div class="modal fade" id="modalPropiedad" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content rounded-4 border-0">
+                <div class="modal-header border-0 pb-0"><button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body pt-0 px-4 pb-4" id="modal-body-content"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function abrirModalPropiedad(url) {
+            var myModal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
+            var contentDiv = document.getElementById('modal-body-content');
+            contentDiv.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-success"></div></div>';
+            myModal.show();
+            fetch(url, {'headers': {'X-Requested-With': 'XMLHttpRequest'}})
+            .then(r => r.text()).then(h => contentDiv.innerHTML = h);
+        }
+    </script>
+
+</body>
+</html>

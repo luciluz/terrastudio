@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="position-relative text-white py-5 overflow-hidden" style="min-height: 400px; display: flex; align-items: center;">
+    
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background-image: url('https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=1920'); 
+                background-size: cover; background-position: center;">
+    </div>
+    
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(to bottom, rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.95));">
+    </div>
+    
+    <div class="container position-relative z-1 text-center">
+        <div class="mb-3">
+            <span class="text-uppercase fw-bold" 
+                  style="letter-spacing: 3px; font-size: 0.9rem; color: #4ade80; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                Ingeniería & Gestión
+            </span>
+        </div>
+        
+        <h1 class="display-3 fw-bold mb-3" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Nuestros Servicios</h1>
+        
+        <p class="lead text-white-75 mx-auto fs-5" style="max-width: 700px; font-weight: 300;">
+            Desde el levantamiento inicial hasta la firma en notaría. <br>
+            Unificamos lo técnico y lo legal para que tu proyecto avance sin trabas.
+        </p>
+    </div>
+</div>
+
+<div class="bg-light border-bottom sticky-top shadow-sm" style="top: 76px; z-index: 900;">
+    <div class="container">
+        <div class="d-flex justify-content-center gap-2 gap-md-4 py-3 overflow-auto text-nowrap">
+            <a href="#inmobiliaria" class="text-decoration-none text-muted fw-bold small hover-link"><i class="bi bi-house-door-fill me-1"></i> Inmobiliaria</a>
+            <a href="#topografia" class="text-decoration-none text-muted fw-bold small hover-link"><i class="bi bi-layers-half me-1"></i> Topografía</a>
+            <a href="#legal" class="text-decoration-none text-muted fw-bold small hover-link"><i class="bi bi-file-earmark-text me-1"></i> Legal</a>
+            <a href="#tasaciones" class="text-decoration-none text-muted fw-bold small hover-link"><i class="bi bi-graph-up-arrow me-1"></i> Tasaciones</a>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+
+    <div id="inmobiliaria" class="row align-items-center py-5 scroll-margin">
+        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+            <div class="position-relative">
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Corretaje">
+                <div class="position-absolute bottom-0 start-0 bg-success text-white p-3 rounded-end-4 mb-4 shadow">
+                    <i class="bi bi-house-check fs-2"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 order-lg-1">
+            <h6 class="text-success fw-bold text-uppercase ls-1">Corretaje Técnico</h6>
+            <h2 class="fw-bold text-technical display-6 mb-4">Operaciones Inmobiliarias</h2>
+            <p class="text-muted mb-4">
+                No solo publicamos un aviso; validamos técnicamente tu propiedad antes de venderla. 
+                Esto acelera el cierre del negocio y evita sorpresas en el estudio de títulos.
+            </p>
+            
+            <ul class="list-unstyled mb-4">
+                <li class="mb-3 d-flex align-items-start">
+                    <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                    <div>
+                        <strong>Compra y Venta Segura</strong>
+                        <p class="small text-muted mb-0">Filtramos interesados reales y gestionamos la promesa de compraventa.</p>
+                    </div>
+                </li>
+                <li class="mb-3 d-flex align-items-start">
+                    <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                    <div>
+                        <strong>Gestión de Arriendos</strong>
+                        <p class="small text-muted mb-0">Administración de contratos y evaluación comercial de arrendatarios.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <button onclick="activarWizard('inmobiliaria')" class="btn btn-outline-dark rounded-pill fw-bold px-4">
+                Cotizar Corretaje <i class="bi bi-arrow-down-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <hr class="my-5 border-secondary opacity-10">
+
+    <div id="topografia" class="row align-items-center py-5 scroll-margin">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="position-relative">
+                <img src="https://umilesgroup.com/wp-content/uploads/2023/02/diseno-sin-titulo-57.jpg.webp" class="img-fluid rounded-4 shadow-lg" alt="Topografía">
+                <div class="position-absolute bottom-0 end-0 bg-primary text-white p-3 rounded-start-4 mb-4 shadow" style="background-color: #2980b9 !important;">
+                    <i class="bi bi-geo-alt fs-2"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h6 class="fw-bold text-uppercase ls-1" style="color: #2980b9;">Ingeniería de Detalle</h6>
+            <h2 class="fw-bold text-technical display-6 mb-4">Topografía y Geomensura</h2>
+            <p class="text-muted mb-4">
+                La base de cualquier proyecto es medir bien. Contamos con equipos de alta precisión 
+                (Estación Total, GNSS, Drones) para entregar planos aprobables por la DOM y el SAG.
+            </p>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <i class="bi bi-grid-3x3 text-primary mb-2 d-block fs-4"></i>
+                        <strong class="d-block mb-1">Subdivisiones</strong>
+                        <span class="small text-muted">Loteos rurales y urbanos con pre-roles asignados.</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <i class="bi bi-airplane text-primary mb-2 d-block fs-4"></i>
+                        <strong class="d-block mb-1">Fotogrametría</strong>
+                        <span class="small text-muted">Mapeo aéreo con drones para grandes extensiones.</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="activarWizard('topografia')" class="btn btn-outline-dark rounded-pill fw-bold px-4">
+                Solicitar Topografía <i class="bi bi-arrow-down-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <hr class="my-5 border-secondary opacity-10">
+
+    <div id="legal" class="row align-items-center py-5 scroll-margin">
+        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+            <div class="position-relative">
+                <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Legal">
+                <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 rounded-end-4 mb-4 shadow">
+                    <i class="bi bi-file-earmark-check fs-2"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 order-lg-1">
+            <h6 class="fw-bold text-uppercase ls-1" style="color: #d35400;">Certeza Jurídica</h6>
+            <h2 class="fw-bold text-technical display-6 mb-4">Legal y Regularización</h2>
+            <p class="text-muted mb-4">
+                Transformamos la posesión material en dominio legal. Resolvemos herencias complejas, 
+                saneamientos por Bienes Nacionales y estudios de títulos profundos.
+            </p>
+            
+            <ul class="list-unstyled mb-4">
+                <li class="mb-2"><i class="bi bi-check2-square text-warning me-2"></i> Saneamiento de pequeña propiedad raíz.</li>
+                <li class="mb-2"><i class="bi bi-check2-square text-warning me-2"></i> Posesiones efectivas y herencias.</li>
+                <li class="mb-2"><i class="bi bi-check2-square text-warning me-2"></i> Fusiones y rectificaciones de deslindes.</li>
+                <li class="mb-2"><i class="bi bi-check2-square text-warning me-2"></i> Tramitación completa en CBR Tomé.</li>
+            </ul>
+
+            <button onclick="activarWizard('legal')" class="btn btn-outline-dark rounded-pill fw-bold px-4">
+                Consulta Legal <i class="bi bi-arrow-down-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <hr class="my-5 border-secondary opacity-10">
+
+    <div id="tasaciones" class="row align-items-center py-5 scroll-margin">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="position-relative">
+                <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Tasaciones">
+                <div class="position-absolute bottom-0 end-0 bg-info text-white p-3 rounded-start-4 mb-4 shadow" style="background-color: #1abc9c !important;">
+                    <i class="bi bi-clipboard-data fs-2"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h6 class="fw-bold text-uppercase ls-1" style="color: #1abc9c;">Valor Real</h6>
+            <h2 class="fw-bold text-technical display-6 mb-4">Tasaciones Profesionales</h2>
+            <p class="text-muted mb-4">
+                No adivines el precio. Usamos metodologías normadas para determinar el valor comercial 
+                real de tu propiedad, ya sea para venta, crédito hipotecario o división de patrimonio.
+            </p>
+            
+            <p class="border-start border-4 border-info ps-3 fst-italic text-muted">
+                "Una tasación correcta puede significar la diferencia entre vender rápido o tener la propiedad estancada por meses."
+            </p>
+
+            <button onclick="activarWizard('tasaciones')" class="btn btn-outline-dark rounded-pill fw-bold px-4 mt-3">
+                Solicitar Tasación <i class="bi bi-arrow-down-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function activarWizard(categoria) {
+        // 1. Hacemos scroll suave hasta la sección de contacto (que está en el footer/base)
+        const contactoSection = document.getElementById('contacto-interactivo');
+        contactoSection.scrollIntoView({ behavior: 'smooth' });
+
+        // 2. Buscamos el botón correspondiente en el Wizard y le hacemos click
+        // Esperamos 800ms para que termine el scroll
+        setTimeout(() => {
+            // Buscamos el botón que tenga el onclick con la categoría correcta
+            const botones = document.querySelectorAll(`#step-1 button`);
+            botones.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(`'${categoria}'`)) {
+                    btn.click(); // ¡Click automático!
+                    
+                    // Efecto visual para destacar que se seleccionó
+                    btn.classList.add('shadow-lg');
+                    setTimeout(() => btn.classList.remove('shadow-lg'), 500);
+                }
+            });
+        }, 800);
+    }
+</script>
+
+<style>
+    /* Ajuste para que el menú sticky no tape el título al hacer click en los links */
+    .scroll-margin { scroll-margin-top: 140px; }
+    .hover-link:hover { color: #198754 !important; }
+</style>
+
+{% endblock %}

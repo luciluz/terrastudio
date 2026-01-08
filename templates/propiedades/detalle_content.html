@@ -1,0 +1,72 @@
+{% load humanize %}
+<div class="row">
+    <div class="col-lg-8">
+        
+        <div class="mb-4 shadow-sm rounded-4 overflow-hidden position-relative">
+            {% if propiedad.imagen_principal %}
+                <img src="{{ propiedad.imagen_principal.imagen.url }}" class="img-fluid w-100 object-fit-cover" style="height: 400px;" alt="{{ propiedad.titulo }}">
+            {% else %}
+                <img src="https://via.placeholder.com/800x500" class="img-fluid w-100">
+            {% endif %}
+            
+            <span class="position-absolute top-0 start-0 m-3 badge bg-success shadow">{{ propiedad.get_estado_display|default:"Disponible" }}</span>
+        </div>
+
+        <h2 class="text-technical fw-bold mb-1">{{ propiedad.titulo }}</h2>
+        <p class="text-muted mb-4"><i class="bi bi-geo-alt-fill text-danger"></i> {{ propiedad.direccion }}, {{ propiedad.comuna }}</p>
+        
+        <div class="mb-5">
+            <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Descripción</h5>
+            <p class="text-secondary" style="line-height: 1.8;">{{ propiedad.descripcion|default:"Sin descripción detallada."|linebreaksbr }}</p>
+        </div>
+
+        {% if propiedad.imagenes.all.count > 1 %}
+        <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Galería</h5>
+        <div class="row row-cols-3 row-cols-md-4 g-2 mb-4">
+            {% for img in propiedad.imagenes.all %}
+                <div class="col">
+                    <img src="{{ img.imagen.url }}" class="img-thumbnail rounded-3 cursor-pointer hover-scale" style="height: 80px; width: 100%; object-fit: cover;">
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px;">
+            <div class="card-body p-4">
+                <h6 class="text-muted text-uppercase small fw-bold ls-1">Valor de Venta</h6>
+                <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
+                {% if propiedad.precio_pesos_referencia %}
+                     <p class="text-muted small mb-4">aprox. ${{ propiedad.precio_pesos_referencia|intcomma }} CLP</p>
+                {% endif %}
+
+                <div class="d-grid gap-2 mb-4">
+                    <a href="https://wa.me/56912345678?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}" class="btn btn-success fw-bold py-2" target="_blank">
+                        <i class="bi bi-whatsapp me-2"></i> Consultar ahora
+                    </a>
+                </div>
+
+                <h6 class="fw-bold text-technical mb-3">Ficha Técnica</h6>
+                <ul class="list-group list-group-flush small bg-transparent">
+                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                        <span class="text-muted"><i class="bi bi-aspect-ratio me-2"></i>Superficie</span>
+                        <strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                        <span class="text-muted"><i class="bi bi-water me-2"></i>Agua</span>
+                        <strong class="text-dark">{{ propiedad.get_factibilidad_agua_display }}</strong>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                        <span class="text-muted"><i class="bi bi-layers me-2"></i>Topografía</span>
+                        <strong class="text-dark">{{ propiedad.get_topografia_display }}</strong>
+                    </li>
+                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                        <span class="text-muted"><i class="bi bi-file-earmark-text me-2"></i>Rol</span>
+                        <strong class="text-dark">{% if propiedad.rol %}{{ propiedad.rol }}{% else %}En trámite{% endif %}</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

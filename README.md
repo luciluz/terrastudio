@@ -1,2 +1,0 @@
-# terrastudio
-https://terrastudio.cl

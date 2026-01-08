@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="position-relative w-100 overflow-hidden shadow mb-5" style="height: 600px;">
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1932&q=80'); 
+                background-size: cover; background-position: center;">
+    </div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, rgba(33, 37, 41, 0.9), rgba(33, 37, 41, 0.4));"></div>
+
+    <div class="position-relative h-100 container d-flex flex-column justify-content-center text-white p-5">
+        <span class="text-uppercase tracking-widest mb-3 fw-bold" style="letter-spacing: 3px; font-size: 0.9rem; color: #4ade80; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+            Gestión Inmobiliaria & Topografía
+        </span>
+        <h1 class="display-3 fw-bold mb-4" style="max-width: 800px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+            Expertos en Tierra<br>
+        </h1>
+        <p class="fs-5 mb-5 text-light opacity-90" style="max-width: 650px; line-height: 1.6;">
+           Aquí puede ir un texto corto que introduzca la empresa en pocas palabras. Esta extensión de ejemplo sería óptima
+        </p>
+        <div class="d-flex gap-3 flex-column flex-sm-row">
+            <a href="#servicios-resumen" class="btn btn-success btn-lg fw-bold rounded-pill shadow px-4">
+                Nuestros Servicios
+            </a>
+            <a href="{% url 'catalogo' %}" class="btn btn-outline-light btn-lg fw-bold rounded-pill px-4">
+                Ver Propiedades
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5" id="servicios-resumen">
+    <div class="text-center mb-5">
+        <h6 class="text-success fw-bold text-uppercase ls-2 small">Lo que hacemos</h6>
+        <h2 class="fw-bold text-technical">Soluciones Integrales para tu Terreno</h2>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                <div class="mx-auto mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center text-success" style="width: 80px; height: 80px;">
+                    <i class="bi bi-house-door-fill fs-2"></i>
+                </div>
+                <h5 class="fw-bold text-technical">Corretaje de Propiedades</h5>
+                <p class="text-muted small">Compra, venta y administración con un enfoque técnico. Filtramos lo que vendemos para asegurar factibilidad.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                <div class="mx-auto mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; color: #2980b9;">
+                    <i class="bi bi-layers-half fs-2"></i>
+                </div>
+                <h5 class="fw-bold text-technical">Topografía e Ingeniería</h5>
+                <p class="text-muted small">Levantamientos, subdivisiones urbanas y rurales, fotogrametría con drones y cubicaciones.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                <div class="mx-auto mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; color: #8e44ad;">
+                    <i class="bi bi-file-earmark-text fs-2"></i>
+                </div>
+                <h5 class="fw-bold text-technical">Legal y Regularización</h5>
+                <p class="text-muted small">Estudio de títulos, saneamiento de terrenos, posesiones efectivas y trámites en CBR.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                <div class="mx-auto mb-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; color: #d35400;">
+                    <i class="bi bi-graph-up-arrow fs-2"></i>
+                </div>
+                <h5 class="fw-bold text-technical">Tasaciones</h5>
+                <p class="text-muted small">Valoración comercial y agrícola real. Conoce el precio justo de tu patrimonio basado en datos de mercado.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{% url 'servicios' %}" class="btn btn-outline-dark rounded-pill px-4">Conocer todos los detalles <i class="bi bi-arrow-right ms-2"></i></a>
+    </div>
+</div>
+
+<div class="bg-technical text-white py-5 mb-5 shadow-sm" id="stats-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="mb-2 text-success opacity-75"><i class="bi bi-calendar-check fs-1"></i></div>
+                <div class="d-flex justify-content-center align-items-baseline">
+                    <span class="display-4 fw-bold me-1">+</span>
+                    <h2 class="display-4 fw-bold counter-value" data-target="30">0</h2>
+                </div>
+                <p class="mb-0 text-white-50 text-uppercase small ls-1">Años de Experiencia</p>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="mb-2 text-primary opacity-75" style="color: #6c5ce7 !important;"><i class="bi bi-folder-check fs-1"></i></div>
+                <div class="d-flex justify-content-center align-items-baseline">
+                    <span class="display-4 fw-bold me-1">+</span>
+                    <h2 class="display-4 fw-bold counter-value" data-target="500">0</h2>
+                </div>
+                <p class="mb-0 text-white-50 text-uppercase small ls-1">Proyectos Realizados</p>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-2 text-warning opacity-75"><i class="bi bi-geo-alt fs-1"></i></div>
+                <div class="d-flex justify-content-center align-items-baseline">
+                    <span class="display-4 fw-bold me-1">+</span>
+                    <h2 class="display-4 fw-bold counter-value" data-target="12">0</h2>
+                </div>
+                <p class="mb-0 text-white-50 text-uppercase small ls-1">Años operando en la Zona</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const statsSection = document.getElementById("stats-section");
+        const counters = document.querySelectorAll(".counter-value");
+        let started = false;
+
+        const startCounting = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute("data-target");
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.innerText = Math.ceil(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCounter();
+            });
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !started) {
+                    startCounting();
+                    started = true;
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statsSection) observer.observe(statsSection);
+    });
+</script>
+
+{% endblock %}

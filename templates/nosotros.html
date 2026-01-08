@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="position-relative text-white py-5 mb-5 overflow-hidden" style="background-color: #2C3E50;">
+    
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1920'); 
+                background-size: cover; background-position: center; opacity: 0.5; mix-blend-mode: luminosity;">
+    </div>
+    
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(to right, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.8));">
+    </div>
+
+    <div class="container position-relative py-5">
+        <div class="row align-items-center text-center text-lg-start">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <span class="text-uppercase text-success fw-bold ls-2 small">Nuestra Esencia</span>
+                <h1 class="display-4 fw-bold mt-2 mb-3">Expertos en Tierra y Gestión Inmobiliaria</h1>
+                <p class="lead text-white-50 mx-auto mx-lg-0" style="max-width: 500px;">
+                    Desde 2013, transformando problemas complejos en soluciones claras. 
+                    No solo vendemos propiedades, entregamos certeza jurídica y técnica en cada momento del proceso.
+                </p>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="d-flex flex-wrap justify-content-center justify-content-lg-end gap-3 gap-md-4">
+                    <div class="text-center">
+                        <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
+                            <h3 class="fw-bold mb-0 display-5">+12</h3>
+                            <span class="text-uppercase small ls-1">Años Exp.</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                         <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
+                            <h3 class="fw-bold mb-0 display-5">+100</h3>
+                            <span class="text-uppercase small ls-1 text-white-50">Proyectos</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                         <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
+                            <h3 class="fw-bold mb-0 display-5">100%</h3>
+                            <span class="text-uppercase small ls-1 text-white-50">Satisfacción</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-bubble {
+        width: 130px; height: 130px; 
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .stat-bubble:hover {
+        transform: scale(1.05);
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+    }
+    @media (max-width: 576px) {
+        .stat-bubble { width: 110px; height: 110px; }
+        .stat-bubble h3 { font-size: 2rem !important; }
+    }
+</style>
+
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h6 class="text-success fw-bold text-uppercase">¿Por qué elegirnos?</h6>
+            <h2 class="text-technical fw-bold">El Método TerraStudio</h2>
+            <p class="text-muted mx-auto" style="max-width: 700px;">
+                Tenemos un modelo perfeccionado a través de los años. Aplicamos un concepto de <strong>Clínica Inmobiliaria</strong>: diagnosticamos antes de vender.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <a href="{% url 'servicios' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm p-3 hover-lift">
+                    <div class="card-body d-flex align-items-start">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-3 text-technical me-3">
+                            <i class="bi bi-activity fs-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-technical">Diagnóstico de Viabilidad</h5>
+                            <p class="text-muted small mb-0">Respondemos la pregunta nº1: <strong>¿Tiene solución?</strong> Analizamos la factibilidad técnica y legal real del terreno.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'servicios' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm p-3 hover-lift">
+                    <div class="card-body d-flex align-items-start">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-3 text-success me-3">
+                            <i class="bi bi-hourglass-split fs-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-technical">Claridad en Tiempos</h5>
+                            <p class="text-muted small mb-0">Definimos desde el día uno el presupuesto exacto y el cronograma estimado para tu trámite.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+             <a href="#" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm p-3 hover-lift">
+                    <div class="card-body d-flex align-items-start">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-3 text-primary me-3" style="color: #2980b9 !important;">
+                            <i class="bi bi-people-fill fs-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-technical">Equipo Integral</h5>
+                            <p class="text-muted small mb-0">No externalizamos. Contamos con Topógrafo, Abogado y Arquitecto en casa para resolver subdivisiones y herencias.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="text-decoration-none" style="cursor: default;">
+                <div class="card h-100 border-0 shadow-sm p-3 hover-lift">
+                    <div class="card-body d-flex align-items-start">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-3 text-warning me-3" style="color: #d35400 !important;">
+                            <i class="bi bi-pin-map-fill fs-2"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-technical">ADN Local</h5>
+                            <p class="text-muted small mb-0">Operamos en Tomé desde 2013. Conocemos la geografía y la realidad normativa mejor que nadie.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5 mb-5 overflow-hidden"> <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="text-technical fw-bold">Nuestra Trayectoria</h2>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10 position-relative timeline-container">
+                
+                <div class="position-absolute top-0 bottom-0 start-50 border-start border-2 border-secondary opacity-25 d-none d-md-block" style="transform: translateX(-1px);"></div>
+                
+                <div class="mobile-line d-md-none"></div>
+
+                <div class="row align-items-center mb-5 timeline-row">
+                    <div class="col-md-5 text-md-end timeline-content">
+                        <h3 class="fw-bold text-success mb-1">1993</h3>
+                        <h5 class="fw-bold text-technical mb-2">El Origen</h5>
+                        <p class="small text-muted mb-0">Braulio Ruz inicia operaciones en Servicios de Ingeniería, liderando proyectos de minería y obras viales en Chile.</p>
+                    </div>
+                    <div class="col-md-2 text-center position-relative timeline-dot-wrapper">
+                        <div class="timeline-dot bg-white border border-4 border-success rounded-circle shadow-sm"></div>
+                    </div>
+                    <div class="col-md-5"></div>
+                </div>
+
+                <div class="row align-items-center mb-5 timeline-row">
+                    <div class="col-md-5 d-none d-md-block"></div>
+                    <div class="col-md-2 text-center position-relative timeline-dot-wrapper">
+                        <div class="timeline-dot bg-white border border-4 border-technical rounded-circle shadow-sm"></div>
+                    </div>
+                    <div class="col-md-5 timeline-content">
+                        <h3 class="fw-bold text-technical mb-1">2008</h3>
+                        <h5 class="fw-bold text-technical mb-2">Enfoque Social en Tomé</h5>
+                        <p class="small text-muted mb-0">Detectamos la necesidad urgente de regularización de tierras. Nace el modelo de gestión integral para vecinos.</p>
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-5 timeline-row">
+                    <div class="col-md-5 text-md-end timeline-content">
+                        <h3 class="fw-bold text-success mb-1">2013</h3>
+                        <h5 class="fw-bold text-technical mb-2">Fundación Oficial</h5>
+                        <p class="small text-muted mb-0">Se constituye formalmente la empresa. Consolidamos equipo multidisciplinario y base de operaciones.</p>
+                    </div>
+                    <div class="col-md-2 text-center position-relative timeline-dot-wrapper">
+                        <div class="timeline-dot bg-white border border-4 border-success rounded-circle shadow-sm"></div>
+                    </div>
+                    <div class="col-md-5"></div>
+                </div>
+
+                <div class="row align-items-center timeline-row">
+                    <div class="col-md-5 d-none d-md-block"></div>
+                    <div class="col-md-2 text-center position-relative timeline-dot-wrapper">
+                        <div class="timeline-dot bg-success rounded-circle shadow border border-4 border-white"></div>
+                    </div>
+                    <div class="col-md-5 timeline-content">
+                        <h3 class="fw-bold text-success mb-1">2026</h3>
+                        <h5 class="fw-bold text-technical mb-2">TerraStudio Digital</h5>
+                        <p class="small text-muted mb-0">Evolucionamos hacia el Corretaje Técnico Moderno. Digitalizamos catálogo y procesos para total transparencia.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ESTILOS BASE (ESCRITORIO) */
+    .timeline-dot {
+        width: 24px; 
+        height: 24px; 
+        display: inline-block;
+        z-index: 2;
+        position: relative;
+    }
+
+    /* ESTILOS MÓVIL (Menos de 768px) */
+    @media (max-width: 767.98px) {
+        
+        /* 1. La línea vertical continua a la izquierda */
+        .mobile-line {
+            position: absolute;
+            left: 20px; /* Posición desde la izquierda */
+            top: 10px;
+            bottom: 30px; /* Que no llegue hasta el final absoluto */
+            width: 2px;
+            background-color: #dee2e6; /* Color gris suave */
+            z-index: 1;
+        }
+
+        /* 2. Ajuste de las filas para que no tengan márgenes raros */
+        .timeline-row {
+            margin-bottom: 3rem !important; /* Separación entre hitos */
+            position: relative;
+            display: flex;
+            flex-direction: column; /* Apilar elementos si es necesario */
+        }
+
+        /* 3. El contenedor del punto (círculo) */
+        .timeline-dot-wrapper {
+            position: absolute !important;
+            left: 8px; /* Centrado sobre la línea (20px linea - 12px mitad punto) */
+            top: 0;
+            width: auto !important;
+            padding: 0 !important;
+            text-align: left !important;
+            z-index: 2;
+        }
+
+        /* 4. El contenido (Texto) */
+        .timeline-content {
+            padding-left: 60px !important; /* Espacio para dejar sitio a la línea y punto */
+            text-align: left !important; /* Forzar alineación izquierda */
+            width: 100%;
+        }
+        
+        /* Ajuste fino para el último elemento */
+        .timeline-row:last-child { margin-bottom: 0 !important; }
+    }
+</style>
+
+<div class="container mb-5">
+    <div class="text-center mb-5">
+        <h2 class="text-technical fw-bold">Equipo Profesional</h2>
+        <p class="text-muted">La experiencia detrás de cada gestión.</p>
+    </div>
+    
+    <div class="row justify-content-center g-4">
+        <div class="col-md-4">
+            <div class="text-center hover-lift p-3 rounded-4">
+                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center overflow-hidden" style="width: 120px; height: 120px;">
+                    <i class="bi bi-person-fill text-muted fs-1"></i>
+                </div>
+                <h5 class="fw-bold text-technical mb-0">Braulio Ruz Cerpa</h5>
+                <small class="text-success fw-bold text-uppercase">Fundador & Topógrafo</small>
+                <p class="text-muted small mt-2 px-3">Más de 30 años de experiencia en ingeniería, docencia y gestión de proyectos complejos.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="text-center hover-lift p-3 rounded-4">
+                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                    <i class="bi bi-file-text-fill text-muted fs-1"></i>
+                </div>
+                <h5 class="fw-bold text-technical mb-0">Área Legal</h5>
+                <small class="text-success fw-bold text-uppercase">Abogados Asociados</small>
+                <p class="text-muted small mt-2 px-3">Especialistas en estudio de títulos, posesiones efectivas y derecho inmobiliario.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="text-center hover-lift p-3 rounded-4">
+                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                    <i class="bi bi-building text-muted fs-1"></i>
+                </div>
+                <h5 class="fw-bold text-technical mb-0">Área Técnica</h5>
+                <small class="text-success fw-bold text-uppercase">Arquitectura & Urbanismo</small>
+                <p class="text-muted small mt-2 px-3">Gestión de permisos de edificación, subdivisiones prediales y proyectos urbanos.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+    .ls-1 { letter-spacing: 1px; }
+    .ls-2 { letter-spacing: 2px; }
+</style>
+
+{% endblock %}
