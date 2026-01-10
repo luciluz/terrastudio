@@ -613,6 +613,27 @@
             .then(r => r.text()).then(h => contentDiv.innerHTML = h);
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Buscamos la barra de navegación colapsable
+            var navMain = document.getElementById('navbarNav');
+            
+            // Buscamos todos los links DENTRO de esa barra (incluyendo el botón contacto)
+            var navLinks = navMain.querySelectorAll('a');
+
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    // Si el menú está abierto (tiene la clase show), lo cerramos
+                    if (navMain.classList.contains('show')) {
+                        var bsCollapse = bootstrap.Collapse.getInstance(navMain);
+                        if (bsCollapse) {
+                            bsCollapse.hide();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>
