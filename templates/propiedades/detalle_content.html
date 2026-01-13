@@ -1,15 +1,29 @@
 {% load humanize %}
+
+{% with imagen_principal_url=propiedad.imagen_principal.imagen.url|default:"https://via.placeholder.com/800x500" %}
+
 <div class="row">
     <div class="col-lg-8">
         
-        <div class="mb-4 shadow-sm rounded-4 overflow-hidden position-relative">
-            {% if propiedad.imagen_principal %}
-                <img src="{{ propiedad.imagen_principal.imagen.url }}" class="img-fluid w-100 object-fit-cover" style="height: 400px;" alt="{{ propiedad.titulo }}">
-            {% else %}
-                <img src="https://via.placeholder.com/800x500" class="img-fluid w-100">
-            {% endif %}
+        <div class="mb-4 shadow-sm rounded-4 overflow-hidden position-relative bg-dark">
             
+            <img id="mainImage" 
+                 src="{{ imagen_principal_url }}" 
+                 data-gallery-images="{{ imagen_principal_url }}{% for img in propiedad.imagenes.all %},{{ img.imagen.url }}{% endfor %}"
+                 data-current-index="0"
+                 class="img-fluid w-100 object-fit-cover" 
+                 style="height: 400px; transition: opacity 0.3s ease; cursor: pointer;" 
+                 alt="{{ propiedad.titulo }}">
+
             <span class="position-absolute top-0 start-0 m-3 badge bg-success shadow">{{ propiedad.get_estado_display|default:"Disponible" }}</span>
+
+            <button onclick="moveGallery(-1)" class="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle shadow-lg bg-opacity-50 border-0 d-flex align-items-center justify-content-center hover-scale" style="width: 40px; height: 40px; z-index: 10;">
+                <i class="bi bi-chevron-left text-white"></i>
+            </button>
+
+            <button onclick="moveGallery(1)" class="btn btn-dark position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle shadow-lg bg-opacity-50 border-0 d-flex align-items-center justify-content-center hover-scale" style="width: 40px; height: 40px; z-index: 10;">
+                <i class="bi bi-chevron-right text-white"></i>
+            </button>
         </div>
 
         <h2 class="text-technical fw-bold mb-1">{{ propiedad.titulo }}</h2>
@@ -20,18 +34,30 @@
             <p class="text-secondary" style="line-height: 1.8;">{{ propiedad.descripcion|default:"Sin descripción detallada."|linebreaksbr }}</p>
         </div>
 
-        {% if propiedad.imagenes.all.count > 1 %}
+        {% if propiedad.imagenes.all.count > 0 %}
         <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Galería</h5>
         <div class="row row-cols-3 row-cols-md-4 g-2 mb-4">
+            
+            <div class="col">
+                <img src="{{ imagen_principal_url }}" 
+                     onclick="jumpToImage(0)" 
+                     class="img-thumbnail rounded-3 cursor-pointer hover-scale border-primary gallery-thumb" 
+                     style="height: 80px; width: 100%; object-fit: cover;">
+            </div>
+
             {% for img in propiedad.imagenes.all %}
                 <div class="col">
-                    <img src="{{ img.imagen.url }}" class="img-thumbnail rounded-3 cursor-pointer hover-scale" style="height: 80px; width: 100%; object-fit: cover;">
+                    <img src="{{ img.imagen.url }}" 
+                         onclick="jumpToImage('{{ forloop.counter }}')" 
+                         class="img-thumbnail rounded-3 cursor-pointer hover-scale gallery-thumb" 
+                         style="height: 80px; width: 100%; object-fit: cover;">
                 </div>
             {% endfor %}
         </div>
         {% endif %}
-    </div>
 
+    </div>
+    
     <div class="col-lg-4">
         <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px;">
             <div class="card-body p-4">
@@ -42,7 +68,7 @@
                 {% endif %}
 
                 <div class="d-grid gap-2 mb-4">
-                    <a href="https://wa.me/56912345678?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}" class="btn btn-success fw-bold py-2" target="_blank">
+                    <a href="https://wa.me/56976607301?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}" class="btn btn-success fw-bold py-2" target="_blank">
                         <i class="bi bi-whatsapp me-2"></i> Consultar ahora
                     </a>
                 </div>
@@ -70,3 +96,5 @@
         </div>
     </div>
 </div>
+
+{% endwith %}

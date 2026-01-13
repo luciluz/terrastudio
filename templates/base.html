@@ -634,6 +634,75 @@
             });
         });
     </script>
+<script>
+    // Función para cambiar de imagen (Flechas)
+    function moveGallery(direction) {
+        const mainImg = document.getElementById('mainImage');
+        if (!mainImg) return;
+
+        // Recuperamos la lista de imágenes desde el atributo data
+        const imagesStr = mainImg.dataset.galleryImages;
+        if (!imagesStr) return;
+
+        const allImages = imagesStr.split(','); 
+        let currentIndex = parseInt(mainImg.dataset.currentIndex || 0);
+
+        // Calcular nuevo índice
+        currentIndex += direction;
+
+        // Lógica de carrusel infinito
+        if (currentIndex >= allImages.length) currentIndex = 0;
+        if (currentIndex < 0) currentIndex = allImages.length - 1;
+
+        // Actualizar todo
+        updateImageDisplay(mainImg, allImages[currentIndex], currentIndex);
+    }
+
+    // Función para seleccionar miniatura específica
+    function jumpToImage(index) {
+        const mainImg = document.getElementById('mainImage');
+        if (!mainImg) return;
+
+        const imagesStr = mainImg.dataset.galleryImages;
+        if (!imagesStr) return;
+        
+        const allImages = imagesStr.split(',');
+        
+        // Aseguramos que index sea un número
+        index = parseInt(index);
+        
+        updateImageDisplay(mainImg, allImages[index], index);
+    }
+
+    // Función auxiliar visual (Actualiza Imagen y Bordes)
+    function updateImageDisplay(imgElement, newUrl, newIndex) {
+        // PASO 1: Cambiar la imagen principal con efecto
+        imgElement.style.opacity = 0.5;
+        setTimeout(() => {
+            imgElement.src = newUrl;
+            imgElement.style.opacity = 1;
+        }, 150);
+
+        // Guardamos el nuevo índice
+        imgElement.dataset.currentIndex = newIndex;
+
+        // PASO 2: Actualizar los bordes de las miniaturas
+        // Buscamos todas las miniaturas por su clase 'gallery-thumb'
+        const thumbnails = document.querySelectorAll('.gallery-thumb');
+        
+        thumbnails.forEach((thumb, index) => {
+            if (index === newIndex) {
+                // Si es la imagen actual, ponemos el borde azul
+                thumb.classList.add('border-primary');
+                thumb.classList.remove('border-0');
+            } else {
+                // Si no es, quitamos el borde azul
+                thumb.classList.remove('border-primary');
+                thumb.classList.add('border-0');
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
