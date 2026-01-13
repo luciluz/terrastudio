@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'PORTAL': 'url_portalinmobiliario',
         'YAPO': 'url_yapo',
         'TOCTOC': 'url_toctoc',
+        'TERRA_WEB': 'url_terrastudio',
         'OTRA': 'url_otra'
     };
 

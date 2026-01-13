@@ -70,7 +70,7 @@ class PropiedadAdmin(admin.ModelAdmin):
                 
                 # --- NUEVO: Los campos de Links (El JS los ocultará si no están marcados) ---
                 'url_facebook', 'url_meta_ads', 'url_instagram', 
-                'url_portalinmobiliario', 'url_yapo', 'url_toctoc', 'url_otra',
+                'url_portalinmobiliario', 'url_yapo', 'url_toctoc', 'url_terrastudio','url_otra',
                 
                 'descripcion',
                 'observaciones_internas',

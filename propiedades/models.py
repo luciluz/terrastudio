@@ -31,6 +31,7 @@ PLATAFORMAS_OPCIONES = [
     ('PORTAL', 'PortalInmobiliario'),
     ('YAPO', 'Yapo.cl'),
     ('TOCTOC', 'TocToc'),
+    ('TERRA_WEB', 'TerraStudio.cl'),
     ('OTRA', 'Otra'),
 ]
 
@@ -132,6 +133,7 @@ class Propiedad(models.Model):
     url_portalinmobiliario = models.URLField(blank=True, verbose_name="Link PortalInmobiliario")
     url_yapo = models.URLField(blank=True, verbose_name="Link Yapo.cl")
     url_toctoc = models.URLField(blank=True, verbose_name="Link TocToc")
+    url_terrastudio = models.URLField(blank=True, null=True, verbose_name="Link Publicación Terrastudio")
     url_otra = models.URLField(blank=True, verbose_name="Link Otra Plataforma")
 
     descripcion = models.TextField(verbose_name="Descripción Pública")
@@ -161,7 +163,7 @@ class Propiedad(models.Model):
         return Decimal('38000')
 
     def save(self, *args, **kwargs):
-        # 1. ID Automático TS-0001
+        # --- 1. Lógica existente: ID Automático (TS-0001) ---
         if not self.id_ficha:
             ultimo = Propiedad.objects.all().order_by('id_ficha').last()
             nuevo_num = 1
@@ -172,6 +174,8 @@ class Propiedad(models.Model):
                         nuevo_num = int(partes[1]) + 1
                 except: pass
             self.id_ficha = f"TS-{nuevo_num:04d}"
+
+        super().save(*args, **kwargs)
 
         # 2. Slug con ID y Título
         if not self.slug:
