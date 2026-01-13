@@ -61,12 +61,16 @@
     <div class="col-lg-4">
         <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px;">
             <div class="card-body p-4">
+                
                 <h6 class="text-muted text-uppercase small fw-bold ls-1">Valor de Venta</h6>
-                <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
+                
                 {% if propiedad.precio_pesos_referencia %}
-                     <p class="text-muted small mb-4">aprox. ${{ propiedad.precio_pesos_referencia|intcomma }} CLP</p>
+                    <h2 class="text-technical fw-bold mb-0">${{ propiedad.precio_pesos_referencia|intcomma }}</h2>
+                    <p class="text-muted small mb-4">Valor referencial: {{ propiedad.precio_formateado }}</p>
+                {% else %}
+                    <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
+                    <p class="text-muted small mb-4">Precio en pesos a consultar</p>
                 {% endif %}
-
                 <div class="d-grid gap-2 mb-4">
                     <a href="https://wa.me/56976607301?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}" class="btn btn-success fw-bold py-2" target="_blank">
                         <i class="bi bi-whatsapp me-2"></i> Consultar ahora

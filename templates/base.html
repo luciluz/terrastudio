@@ -184,7 +184,15 @@
                         <div class="card-body">
                             <h5 class="card-title fw-bold text-technical mb-1 text-truncate">{{ prop.titulo }}</h5>
                             <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ prop.comuna }}</p>
-                            <h5 class="fw-bold text-success mb-0">{{ prop.precio_formateado }}</h5>
+                            
+                            <div class="mt-2">
+                                {% if prop.precio_pesos_referencia %}
+                                    <h5 class="fw-bold text-success mb-0">${{ prop.precio_pesos_referencia|intcomma }}</h5>
+                                    <small class="text-muted" style="font-size: 0.8rem;">{{ prop.precio_formateado }}</small>
+                                {% else %}
+                                    <h5 class="fw-bold text-success mb-0">{{ prop.precio_formateado }}</h5>
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="card-footer bg-white border-0 p-3">
                             <a href="{% url 'detalle_propiedad' prop.slug %}" onclick="event.preventDefault(); abrirModalPropiedad(this.href);" class="btn btn-outline-primary w-100 rounded-pill fw-bold btn-sm">Ver Detalles</a>

@@ -38,11 +38,14 @@
                     <div class="card-body">
                         <h5 class="card-title fw-bold text-technical mb-1">{{ propiedad.titulo }}</h5>
                         <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> {{ propiedad.comuna }}</p>
+                        
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <span class="d-block fw-bold text-success fs-5">{{ propiedad.precio_formateado }}</span>
                                 {% if propiedad.precio_pesos_referencia %}
-                                <small class="text-muted" style="font-size: 0.75rem;">~ ${{ propiedad.precio_pesos_referencia|intcomma }}</small>
+                                    <span class="d-block fw-bold text-success fs-5">${{ propiedad.precio_pesos_referencia|intcomma }}</span>
+                                    <small class="text-muted" style="font-size: 0.75rem;">Valor: {{ propiedad.precio_formateado }}</small>
+                                {% else %}
+                                    <span class="d-block fw-bold text-success fs-5">{{ propiedad.precio_formateado }}</span>
                                 {% endif %}
                             </div>
                         </div>
