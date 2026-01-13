@@ -4,9 +4,11 @@ from .models import Propiedad
 # --- VISTAS ---
 
 def inicio(request):
-    # En el inicio mostramos TODO o una selección, como prefieras.
-    # Por ahora dejemos solo las últimas 3 para que no compita con el catálogo completo
-    propiedades_destacadas = Propiedad.objects.exclude(estado='VENDIDO').order_by('-creado')[:3]
+    # Filtramos solo lo que se puede vender/mostrar. 
+    # Ocultamos PAUSADO y VENDIDO.
+    propiedades_destacadas = Propiedad.objects.filter(
+        estado__in=['DISPONIBLE', 'RESERVADO']
+    ).order_by('-fecha_ingreso')[:3]
     
     context = {
         'propiedades': propiedades_destacadas
@@ -14,12 +16,17 @@ def inicio(request):
     return render(request, 'propiedades/inicio.html', context)
 
 def nosotros(request):
-    # ¡TRUCO! Para que base.html muestre propiedades, necesitamos enviarlas aquí también
-    propiedades_destacadas = Propiedad.objects.exclude(estado='VENDIDO').order_by('-creado')[:3]
+    # Necesario para el footer o secciones comunes en base.html
+    propiedades_destacadas = Propiedad.objects.filter(
+        estado__in=['DISPONIBLE', 'RESERVADO']
+    ).order_by('-fecha_ingreso')[:3]
     return render(request, 'nosotros.html', {'propiedades': propiedades_destacadas})
 
 def catalogo(request):
-    todas_las_propiedades = Propiedad.objects.exclude(estado='VENDIDO').order_by('-creado')
+    # Catálogo completo visible
+    todas_las_propiedades = Propiedad.objects.filter(
+        estado__in=['DISPONIBLE', 'RESERVADO']
+    ).order_by('-fecha_ingreso')
     
     context = {
         'propiedades': todas_las_propiedades,
@@ -31,18 +38,21 @@ def catalogo(request):
 def detalle_propiedad(request, slug):
     propiedad = get_object_or_404(Propiedad, slug=slug)
     
-    # Lógica del Modal
+    # 1. Si es AJAX (Clic desde la misma web): Devuelve solo el HTML del modal
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'propiedades/detalle_content.html', {'propiedad': propiedad})
     
-    # Si entran directo, también necesitamos las destacadas para el footer
-    propiedades_destacadas = Propiedad.objects.exclude(estado='VENDIDO').order_by('-creado')[:3]
+    # 2. Si es Link Directo (Compartido por WhatsApp):
+    # Cargamos el catálogo entero pero le decimos qué modal abrir automáticamente.
+    todas_las_propiedades = Propiedad.objects.filter(
+        estado__in=['DISPONIBLE', 'RESERVADO']
+    ).order_by('-fecha_ingreso')
     
-    return render(request, 'propiedades/detalle.html', {
-        'propiedad': propiedad,
-        'propiedades': propiedades_destacadas # Enviamos esto para que base.html no falle
+    return render(request, 'propiedades/catalogo.html', {
+        'propiedades': todas_las_propiedades,
+        'propiedad_activa_slug': slug, # <--- Esto activa el JS para abrir el modal solo
+        'is_catalog_page': True
     })
 
 def servicios(request):
-    # Renderiza la plantilla que te di en la respuesta anterior
     return render(request, 'servicios.html')
