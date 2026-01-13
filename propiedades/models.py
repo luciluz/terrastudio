@@ -425,7 +425,14 @@ class ImagenPropiedad(models.Model):
     class Meta:
         verbose_name = "Imagen de Propiedad"
         verbose_name_plural = "Imágenes de Propiedades"
-        ordering = ['orden', '-subido_en']
+        
+        # CAMBIOS REALIZADOS:
+        # 1. '-es_principal': El signo menos hace que True vaya antes que False. Así la portada siempre es la #1.
+        # 2. 'orden': Mantiene tu orden manual (si usas 1, 2, 3...).
+        # 3. 'subido_en': LE QUITAMOS EL MENOS (-). Antes decía "de la más nueva a la más vieja". 
+        #    Al quitarle el menos, dice "de la más vieja a la más nueva" (orden natural de subida).
+        ordering = ['-es_principal', 'orden', 'subido_en']
+        
         indexes = [
             models.Index(fields=['propiedad', 'es_principal']),
             models.Index(fields=['propiedad', 'orden']),

@@ -9,8 +9,13 @@
             
             <img id="mainImage" 
                  src="{{ imagen_principal_url }}" 
-                 data-gallery-images="{{ imagen_principal_url }}{% for img in propiedad.imagenes.all %},{{ img.imagen.url }}{% endfor %}"
-                 data-current-index="0"
+                 
+                 {# 1. Generamos la lista SOLO con el bucle para evitar duplicados #}
+                 data-gallery-images="{% for img in propiedad.imagenes.all %}{{ img.imagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                 
+                 {# 2. Buscamos en qué posición (índice) está la imagen principal actual #}
+                 data-current-index="{% for img in propiedad.imagenes.all %}{% if img.imagen.url == imagen_principal_url %}{{ forloop.counter0 }}{% endif %}{% endfor %}"
+                 
                  class="img-fluid w-100 object-fit-cover" 
                  style="height: 400px; transition: opacity 0.3s ease; cursor: pointer;" 
                  alt="{{ propiedad.titulo }}">
@@ -38,21 +43,20 @@
         <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Galería</h5>
         <div class="row row-cols-3 row-cols-md-4 g-2 mb-4">
             
-            <div class="col">
-                <img src="{{ imagen_principal_url }}" 
-                     onclick="jumpToImage(0)" 
-                     class="img-thumbnail rounded-3 cursor-pointer hover-scale border-primary gallery-thumb" 
-                     style="height: 80px; width: 100%; object-fit: cover;">
-            </div>
-
+            {# 3. Quitamos la miniatura manual y usamos solo el bucle #}
             {% for img in propiedad.imagenes.all %}
                 <div class="col">
                     <img src="{{ img.imagen.url }}" 
-                         onclick="jumpToImage('{{ forloop.counter }}')" 
-                         class="img-thumbnail rounded-3 cursor-pointer hover-scale gallery-thumb" 
+                         {# Usamos counter0 (índice base 0) para que coincida con el array de JS #}
+                         onclick="jumpToImage('{{ forloop.counter0 }}')" 
+                         
+                         {# Lógica visual: Si es la principal, le ponemos el borde azul, si no, borde 0 #}
+                         class="img-thumbnail rounded-3 cursor-pointer hover-scale gallery-thumb {% if img.imagen.url == imagen_principal_url %}border-primary{% else %}border-0{% endif %}" 
+                         
                          style="height: 80px; width: 100%; object-fit: cover;">
                 </div>
             {% endfor %}
+            
         </div>
         {% endif %}
 
