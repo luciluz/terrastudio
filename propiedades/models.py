@@ -4,13 +4,23 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 import os
 import requests
 from decimal import Decimal
+import datetime
 
-# --- CONSTANTES Y OPCIONES DE SELECCIÓN (CHOICES) ---
-# Definición de listas de opciones como constantes para mantener la integridad 
-# de los datos y facilitar cambios futuros en las reglas de negocio.
+# --- CONSTANTES Y OPCIONES (CHOICES) ---
+
+TIPO_OPERACION = [
+    ('VENTA', 'Venta'),
+    ('ARRIENDO', 'Arriendo'),
+]
+
+TIPO_MONEDA = [
+    ('UF', 'UF'),
+    ('CLP', 'Pesos Chilenos (CLP)'),
+]
 
 TIPO_PROPIEDAD = [
     ('PARCELA', 'Parcela de Agrado'),
@@ -24,496 +34,243 @@ ESTADO_PROPIEDAD = [
     ('DISPONIBLE', 'Disponible'),
     ('RESERVADO', 'Reservado'),
     ('VENDIDO', 'Vendido'),
+    ('PAUSADO', 'Pausado / Suspendido'),
 ]
 
+# Factibilidades Detalladas
 TIPO_AGUA = [
-    ('POTABLE', 'Agua Potable (Red Pública)'),
+    ('RED_PUBLICA', 'Red Pública (Essbio/Smapa)'),
     ('APR', 'APR (Agua Potable Rural)'),
-    ('PUNTERA', 'Puntera / Pozo'),
+    ('POZO', 'Pozo Profundo'),
+    ('PUNTERA', 'Puntera'),
+    ('VERTIENTE', 'Vertiente / Estero'),
     ('CAMION', 'Camión Aljibe'),
-    ('NO_TIENE', 'Sin factibilidad actual'),
+    ('NO_TIENE', 'No tiene / Sin factibilidad'),
+]
+
+TIPO_LUZ = [
+    ('MEDIDOR', 'Medidor Instalado'),
+    ('FACTIBILIDAD', 'Factibilidad Técnica'),
+    ('POSTACION', 'Postación Cerca'),
+    ('SOLAR', 'Proyecto Solar Recomendado'),
+    ('NO_TIENE', 'No tiene'),
+]
+
+TIPO_ALCANTARILLADO = [
+    ('INSTALADO', 'Instalado'),
+    ('ACCESO_RED', 'Acceso a Red'),
+    ('FOSA', 'Fosa Séptica'),
+    ('NO_TIENE', 'No tiene'),
 ]
 
 TOPOGRAFIA = [
-    ('PLANO', '100% Plano'),
-    ('LOMA_SUAVE', 'Lomaje Suave'),
-    ('PENDIENTE', 'Pendiente Fuerte'),
-    ('MIXTO', 'Mixto (Plano y Ladera)'),
+    ('PLANO', 'Plano'),
+    ('PENDIENTE_SUAVE', 'Pendiente Suave'),
+    ('PENDIENTE_FUERTE', 'Pendiente Fuerte'),
+    ('MIXTO', 'Mixto / Variado'),
+    ('IRREGULAR', 'Irregular'),
 ]
 
 # --- MODELOS DE DATOS ---
 
 class Propiedad(models.Model):
-    """
-    Modelo principal que representa un activo inmobiliario (terreno o construcción).
-    
-    Diseñado para manejar tanto datos comerciales (precios, estado de venta) como 
-    especificaciones técnicas, legales y topográficas necesarias para la evaluación 
-    de viabilidad de proyectos y tasaciones.
-    
-    Attributes:
-        titulo: Título descriptivo del aviso de la propiedad
-        slug: Identificador único para URLs amigables con SEO
-        precio_uf: Valor de la propiedad en UF (Unidad de Fomento)
-        precio_pesos_referencia: Valor aproximado en pesos chilenos
-        estado: Estado actual en el proceso de venta
-        tipo: Clasificación del tipo de propiedad
-        superficie_total_m2: Área total del terreno en metros cuadrados
-        latitud: Coordenada geográfica decimal para geolocalización
-        longitud: Coordenada geográfica decimal para geolocalización
-    """
-
-    # 1. IDENTIFICACIÓN Y SEO
-    titulo = models.CharField(
-        max_length=200, 
-        verbose_name="Título del aviso"
-    )
-    slug = models.SlugField(
-        unique=True, 
+    # --- A. IDENTIFICACIÓN ---
+    id_ficha = models.CharField(
+        max_length=50,
+        unique=True,
         blank=True,
-        help_text="Identificador único para URL amigables. Se genera automáticamente desde el título si se deja en blanco."
+        verbose_name="ID Individual (Ficha)",
+        help_text="Dejar en blanco para generar automático (ej: TS-2026-001). Si escribes uno manual, se respetará."
     )
-    
-    # 2. VALORIZACIÓN ECONÓMICA
-    # El precio en UF se utiliza como valor base debido a la inflación en Chile.
-    # El precio en pesos es referencial y requiere actualización periódica.
-    precio_uf = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name="Precio en UF",
-        help_text="Precio en UF. Si se deja en blanco y se ingresa precio en pesos, se calculará automáticamente."
-    )
-    precio_pesos_referencia = models.PositiveBigIntegerField(
-        null=True,
-        blank=True,
-        verbose_name="Precio en Pesos (Ref)", 
-        help_text="Precio en pesos chilenos. Si se deja en blanco y se ingresa precio en UF, se calculará automáticamente."
-    )
-    estado = models.CharField(
-        max_length=20, 
-        choices=ESTADO_PROPIEDAD, 
-        default='DISPONIBLE',
-        help_text="Estado actual de la propiedad en el proceso de venta"
-    )
-    tipo = models.CharField(
-        max_length=20, 
-        choices=TIPO_PROPIEDAD, 
-        default='PARCELA',
-        help_text="Clasificación del tipo de propiedad"
-    )
-    
-    # 3. CARACTERÍSTICAS DE EDIFICACIÓN
-    # Campos opcionales aplicables únicamente a propiedades con construcciones existentes.
-    dormitorios = models.PositiveSmallIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name="Dormitorios",
-        help_text="Cantidad de dormitorios (aplicable solo a propiedades construidas)"
-    )
-    banos = models.PositiveSmallIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name="Baños",
-        help_text="Cantidad de baños completos (aplicable solo a propiedades construidas)"
-    )
-    estacionamientos = models.PositiveSmallIntegerField(
-        null=True, 
-        blank=True,
-        help_text="Cantidad de estacionamientos disponibles"
-    )
-    
-    # 4. DIMENSIONES Y METRAJE
-    superficie_total_m2 = models.PositiveIntegerField(
-        verbose_name="Superficie Terreno",
-        help_text="Área total del polígono del terreno en metros cuadrados"
-    )
-    superficie_construida_m2 = models.PositiveIntegerField(
-        null=True, 
-        blank=True, 
-        verbose_name="Sup. Construida",
-        help_text="Metros cuadrados de construcción edificada (aplicable solo a propiedades con edificación)"
-    )
-
-    # 5. ESPECIFICACIONES TÉCNICAS Y LEGALES
-    # Información crítica para evaluación de viabilidad de proyectos y tasaciones oficiales.
     rol = models.CharField(
-        max_length=50, 
-        blank=True, 
-        verbose_name="Rol de Avalúo",
-        help_text="Identificador fiscal del Servicio de Impuestos Internos (SII). Omitir en casos de cesión de derechos."
+        max_length=50, blank=True, verbose_name="Rol de Avalúo",
+        help_text="Ej: 1234-56"
     )
-    topografia = models.CharField(
-        max_length=20, 
-        choices=TOPOGRAFIA, 
-        default='MIXTO',
-        help_text="Característica predominante del relieve del terreno"
+    nro_lote = models.CharField(
+        max_length=50, blank=True, verbose_name="Nro. Lote",
+        help_text="Ej: Lote A-4"
     )
-    factibilidad_agua = models.CharField(
-        max_length=20, 
-        choices=TIPO_AGUA, 
-        default='NO_TIENE',
-        help_text="Tipo de abastecimiento de agua disponible o factible para la propiedad"
+    propietario = models.CharField(
+        max_length=255, blank=True, verbose_name="Nombre Dueño (Privado)",
+        help_text="Dato interno. No se muestra en la web."
     )
+    fecha_ingreso = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Fecha de Ingreso",
+        help_text="Fecha en que la propiedad ingresa al sistema. Editable."
+    )
+    estado = models.CharField(max_length=20, choices=ESTADO_PROPIEDAD, default='DISPONIBLE')
+    tipo = models.CharField(max_length=20, choices=TIPO_PROPIEDAD, default='PARCELA')
     
-    # 6. GEOLOCALIZACIÓN
-    # Coordenadas en formato decimal para integración con servicios de mapas (Leaflet, Google Maps, OpenStreetMap).
-    direccion = models.CharField(
-        max_length=255, 
-        blank=True,
-        help_text="Dirección física o referencia de ubicación"
-    )
-    comuna = models.CharField(
-        max_length=100, 
-        default='Tomé',
-        help_text="Comuna donde se ubica la propiedad"
-    )
-    latitud = models.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        null=True, 
-        blank=True,
-        help_text="Coordenada de latitud en formato decimal. Ejemplo: -36.615517. Rango válido: -90 a 90"
-    )
-    longitud = models.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        null=True, 
-        blank=True,
-        help_text="Coordenada de longitud en formato decimal. Ejemplo: -72.952919. Rango válido: -180 a 180"
+    titulo = models.CharField(max_length=200, verbose_name="Título Publicación")
+    slug = models.SlugField(
+        unique=True, blank=True,
+        help_text="URL amigable. Se genera sola desde el título."
     )
 
-    # 7. METADATOS DE AUDITORÍA
-    # Registro automático de timestamps para trazabilidad de cambios.
-    creado = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Fecha de creación"
+    # --- B. UBICACIÓN ---
+    direccion = models.CharField(max_length=255, blank=True, verbose_name="Dirección")
+    referencia_locacion = models.CharField(max_length=255, blank=True, verbose_name="Referencia Pública")
+    comuna = models.CharField(max_length=100, default='Tomé')
+    sector = models.CharField(max_length=100, blank=True, verbose_name="Sector", help_text="Ej: Mirador, Rinco 2")
+    link_google_earth = models.URLField(blank=True, verbose_name="Link Google Earth/Maps")
+    
+    # Coordenadas para mapas futuros
+    latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    # --- C. ÁMBITO ECONÓMICO ---
+    operacion = models.CharField(max_length=20, choices=TIPO_OPERACION, default='VENTA')
+    moneda = models.CharField(
+        max_length=5, choices=TIPO_MONEDA, default='CLP', 
+        verbose_name="Moneda Principal",
+        help_text="Define si el precio fijo es en Pesos o UF."
     )
-    actualizado = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Última actualización"
+    precio_lista = models.DecimalField(
+        max_digits=12, decimal_places=2, 
+        verbose_name="Precio de Lista",
+        help_text="Ingresa el valor en la moneda seleccionada arriba. Este es el precio real."
     )
+    
+    # Campos calculados (Solo lectura en Admin)
+    precio_uf = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Valor UF (Calc)")
+    precio_pesos_referencia = models.PositiveBigIntegerField(null=True, blank=True, verbose_name="Valor Pesos (Calc)")
+
+    # --- D. DIMENSIONES Y TERRENO ---
+    superficie_total_m2 = models.PositiveIntegerField(verbose_name="Superficie Total (m²)")
+    superficie_construida_m2 = models.PositiveIntegerField(null=True, blank=True, verbose_name="Sup. Construida (m²)")
+    
+    topografia = models.CharField(max_length=20, choices=TOPOGRAFIA, default='MIXTO')
+    topografia_detalle = models.TextField(blank=True, verbose_name="Detalle Topografía")
+
+    # --- E. FACTIBILIDADES ---
+    factibilidad_agua = models.CharField(max_length=20, choices=TIPO_AGUA, default='NO_TIENE', verbose_name="Agua")
+    factibilidad_luz = models.CharField(max_length=20, choices=TIPO_LUZ, default='NO_TIENE', verbose_name="Luz")
+    factibilidad_alcantarillado = models.CharField(max_length=20, choices=TIPO_ALCANTARILLADO, default='NO_TIENE', verbose_name="Alcantarillado")
+    factibilidad_detalle = models.TextField(blank=True, verbose_name="Detalle Servicios")
+
+    # --- F. CARACT. HABITACIONALES ---
+    dormitorios = models.PositiveSmallIntegerField(null=True, blank=True)
+    banos = models.PositiveSmallIntegerField(null=True, blank=True)
+    estacionamientos = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    # --- G. GESTIÓN Y MULTIMEDIA ---
+    publicada = models.BooleanField(
+        default=False, 
+        verbose_name="¿Publicada en Web?",
+        help_text="Marcar para que aparezca en el sitio."
+    )
+    link_drive_fotos = models.URLField(blank=True, verbose_name="Link Drive (Privado)")
+    links_publicados = models.TextField(blank=True, verbose_name="Links Portales", help_text="Links de Yapo, PortalInmobiliario, etc.")
+    observaciones_internas = models.TextField(blank=True, verbose_name="Notas Internas (Privado)")
+    descripcion = models.TextField(verbose_name="Descripción Pública")
+
+    # Metadatos automáticos
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Propiedad"
         verbose_name_plural = "Propiedades"
         ordering = ['-creado']
-        indexes = [
-            models.Index(fields=['estado', 'tipo']),
-            models.Index(fields=['precio_pesos_referencia']),
-            models.Index(fields=['comuna']),
-        ]
-
-    def clean(self):
-        """
-        Validación personalizada a nivel de modelo.
-        
-        Verifica que:
-        - Las coordenadas geográficas estén dentro de rangos válidos
-        - La superficie construida no exceda la superficie total del terreno
-        - Al menos uno de los precios (UF o Pesos) esté definido
-        
-        Raises:
-            ValidationError: Si alguna validación falla
-        """
-        if self.latitud is not None and not (-90 <= self.latitud <= 90):
-            raise ValidationError({
-                'latitud': 'La latitud debe estar entre -90 y 90 grados.'
-            })
-        
-        if self.longitud is not None and not (-180 <= self.longitud <= 180):
-            raise ValidationError({
-                'longitud': 'La longitud debe estar entre -180 y 180 grados.'
-            })
-        
-        if self.superficie_construida_m2 and self.superficie_total_m2:
-            if self.superficie_construida_m2 > self.superficie_total_m2:
-                raise ValidationError({
-                    'superficie_construida_m2': 'La superficie construida no puede ser mayor que la superficie total del terreno.'
-                })
-        
-        if not self.precio_uf and not self.precio_pesos_referencia:
-            raise ValidationError(
-                'Debe ingresar al menos el precio en UF o el precio en Pesos.'
-            )
 
     def _obtener_valor_uf(self):
-        """
-        Consulta el valor actual de la UF desde la API de mindicador.cl.
-        
-        Returns:
-            Decimal: Valor de la UF del día actual
-            None: Si la consulta falla
-        """
+        """Consulta API mindicador.cl"""
         try:
             response = requests.get('https://mindicador.cl/api/uf', timeout=5)
-            response.raise_for_status()
-            data = response.json()
-            valor_uf = Decimal(str(data['serie'][0]['valor']))
-            return valor_uf
-        except Exception as e:
-            # Log del error para debugging en producción
-            print(f"Error al obtener valor UF: {e}")
-            return None
+            if response.status_code == 200:
+                data = response.json()
+                return Decimal(str(data['serie'][0]['valor']))
+        except:
+            pass
+        return Decimal('38000') # Respaldo seguro
 
     def save(self, *args, **kwargs):
-        """
-        Sobrescribe el método save para:
-        1. Generar automáticamente el slug desde el título
-        2. Calcular automáticamente el precio faltante (UF o Pesos) según el ingresado
-        
-        La conversión se realiza únicamente si falta uno de los dos valores,
-        evitando sobrescrituras accidentales en ediciones posteriores.
-        """
-        # 1. Generación automática de slug
+        # 1. Generación Automática de ID Ficha
+        if not self.id_ficha:
+            year = datetime.date.today().year
+            # Contamos cuántas propiedades hay creadas este año para sacar el correlativo
+            count = Propiedad.objects.filter(creado__year=year).count() + 1
+            self.id_ficha = f"TS-{year}-{count:03d}" # Ej: TS-2026-001
+
+        # 2. Generación de Slug
         if not self.slug:
-            base_slug = slugify(self.titulo)
-            slug = base_slug
+            self.slug = slugify(self.titulo)
+            # Evitar duplicados básicos
+            orig_slug = self.slug
             counter = 1
-            
-            while Propiedad.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
+            while Propiedad.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{orig_slug}-{counter}"
                 counter += 1
-            
-            self.slug = slug
-        
-        # 2. Conversión automática de precios
-        # Solo se ejecuta si falta exactamente uno de los dos precios
-        if self.precio_uf and not self.precio_pesos_referencia:
-            # Caso: Tiene UF, necesita calcular Pesos
-            valor_uf = self._obtener_valor_uf()
-            if valor_uf:
-                self.precio_pesos_referencia = int(self.precio_uf * valor_uf)
-            else:
-                # Valor de respaldo si falla la API (promedio histórico reciente)
-                valor_uf_respaldo = Decimal('38000')
-                self.precio_pesos_referencia = int(self.precio_uf * valor_uf_respaldo)
-        
-        elif self.precio_pesos_referencia and not self.precio_uf:
-            # Caso: Tiene Pesos, necesita calcular UF
-            valor_uf = self._obtener_valor_uf()
-            if valor_uf:
-                self.precio_uf = Decimal(str(self.precio_pesos_referencia)) / valor_uf
-                self.precio_uf = self.precio_uf.quantize(Decimal('0.01'))
-            else:
-                # Valor de respaldo si falla la API
-                valor_uf_respaldo = Decimal('38000')
-                self.precio_uf = Decimal(str(self.precio_pesos_referencia)) / valor_uf_respaldo
-                self.precio_uf = self.precio_uf.quantize(Decimal('0.01'))
-        
+
+        # 3. Cálculo de Precios (La lógica Económica)
+        valor_uf_dia = self._obtener_valor_uf()
+
+        if self.moneda == 'UF':
+            # La verdad es la UF
+            self.precio_uf = self.precio_lista
+            self.precio_pesos_referencia = int(self.precio_lista * valor_uf_dia)
+        else:
+            # La verdad es el Peso (CLP)
+            self.precio_pesos_referencia = int(self.precio_lista)
+            self.precio_uf = (self.precio_lista / valor_uf_dia).quantize(Decimal('0.01'))
+
         super().save(*args, **kwargs)
 
     @property
     def precio_formateado(self):
-        """
-        Formatea el precio en UF para visualización en frontend.
-        
-        Returns:
-            str: Precio formateado con separadores de miles (ej: "UF 5.000")
-                 o "Consulte Precio" si no está definido
-        """
-        if self.precio_uf:
-            return f"UF {self.precio_uf:,.0f}".replace(",", ".")
+        # Muestra el precio según la moneda principal
+        if self.moneda == 'CLP' and self.precio_pesos_referencia:
+             return f"${self.precio_pesos_referencia:,.0f}".replace(",", ".")
+        elif self.precio_uf:
+            return f"UF {self.precio_uf:,.2f}".replace(",", ".")
         return "Consulte Precio"
-
-    @property
-    def precio_m2_uf(self):
-        """
-        Calcula el precio unitario por metro cuadrado en UF.
-        
-        Métrica útil para comparación entre propiedades de diferentes dimensiones.
-        
-        Returns:
-            float: Precio por m² redondeado a 2 decimales
-            None: Si los datos necesarios no están disponibles
-        """
-        if self.precio_uf and self.superficie_total_m2:
-            return round(self.precio_uf / self.superficie_total_m2, 2)
-        return None
-
+    
     @property
     def imagen_principal(self):
-        """
-        Obtiene la imagen destacada de la propiedad para visualización en listados.
-        
-        Prioriza la imagen marcada explícitamente como principal. Si no existe,
-        retorna la primera imagen disponible ordenada por criterio predeterminado.
-        
-        Returns:
-            ImagenPropiedad: Instancia de la imagen principal o primera disponible
-            None: Si no existen imágenes asociadas
-        """
-        imagen = self.imagenes.filter(es_principal=True).first()
-        
-        if not imagen:
-            imagen = self.imagenes.first()
-        
-        return imagen
+        img = self.imagenes.filter(es_principal=True).first()
+        return img if img else self.imagenes.first()
 
     def __str__(self):
-        """Representación en string del modelo para el admin de Django."""
-        return f"{self.titulo} | {self.get_estado_display()}"
+        return f"{self.id_ficha} | {self.titulo}"
 
 
 class ImagenPropiedad(models.Model):
-    """
-    Modelo para gestión de galería fotográfica asociada a propiedades.
-    
-    Permite almacenar múltiples imágenes por propiedad con sistema de ordenamiento
-    manual y designación de imagen principal para portadas y listados.
-    
-    Attributes:
-        propiedad: Relación ForeignKey con la propiedad asociada
-        imagen: Campo ImageField con validación de formatos permitidos
-        titulo: Descripción breve de la fotografía
-        alt_text: Texto alternativo para accesibilidad y SEO
-        es_principal: Flag booleano para identificar imagen destacada
-        orden: Valor numérico para ordenamiento manual en galerías
-    """
-    
-    propiedad = models.ForeignKey(
-        Propiedad,
-        on_delete=models.CASCADE,
-        related_name='imagenes',
-        verbose_name="Propiedad",
-        help_text="Propiedad a la que pertenece esta imagen"
-    )
-    
-    imagen = models.ImageField(
-        upload_to='propiedades/%Y/%m/',
-        validators=[
-            FileExtensionValidator(
-                allowed_extensions=['jpg', 'jpeg', 'png', 'webp'],
-                message='Solo se permiten archivos en formato JPG, JPEG, PNG y WebP'
-            )
-        ],
-        verbose_name="Imagen"
-    )
-    
-    titulo = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name="Título de la imagen",
-        help_text="Descripción breve de la fotografía. Ejemplo: 'Vista frontal', 'Cocina equipada', 'Vista panorámica'"
-    )
-    
-    alt_text = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name="Texto alternativo (SEO)",
-        help_text="Descripción para accesibilidad web y optimización SEO. Se genera automáticamente si se omite."
-    )
-    
-    es_principal = models.BooleanField(
-        default=False,
-        verbose_name="¿Es imagen principal?",
-        help_text="Designa esta imagen como la destacada. Solo puede existir una imagen principal por propiedad. Se utiliza en listados y portadas."
-    )
-    
-    orden = models.PositiveSmallIntegerField(
-        default=0,
-        verbose_name="Orden de visualización",
-        help_text="Valor numérico para ordenamiento en galerías. Menor número aparece primero."
-    )
-    
-    subido_en = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Fecha de subida"
-    )
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, related_name='imagenes')
+    imagen = models.ImageField(upload_to='propiedades/%Y/%m/', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp'])])
+    titulo = models.CharField(max_length=200, blank=True)
+    alt_text = models.CharField(max_length=255, blank=True)
+    es_principal = models.BooleanField(default=False)
+    orden = models.PositiveSmallIntegerField(default=0)
+    subido_en = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Imagen de Propiedad"
         verbose_name_plural = "Imágenes de Propiedades"
-        
-        # CAMBIOS REALIZADOS:
-        # 1. '-es_principal': El signo menos hace que True vaya antes que False. Así la portada siempre es la #1.
-        # 2. 'orden': Mantiene tu orden manual (si usas 1, 2, 3...).
-        # 3. 'subido_en': LE QUITAMOS EL MENOS (-). Antes decía "de la más nueva a la más vieja". 
-        #    Al quitarle el menos, dice "de la más vieja a la más nueva" (orden natural de subida).
-        ordering = ['-es_principal', 'orden', 'subido_en']
-        
-        indexes = [
-            models.Index(fields=['propiedad', 'es_principal']),
-            models.Index(fields=['propiedad', 'orden']),
-        ]
+        ordering = ['-es_principal', 'orden', 'subido_en'] # Orden arreglado
+        indexes = [models.Index(fields=['propiedad', 'es_principal']), models.Index(fields=['propiedad', 'orden'])]
 
     def save(self, *args, **kwargs):
-        """
-        Sobrescribe el método save para gestionar automáticamente el alt_text y la unicidad de imagen principal.
-        
-        Procesos ejecutados:
-        1. Generación automática de texto alternativo (alt_text) si no está definido,
-           priorizando el título de la imagen o usando el título de la propiedad como fallback.
-        2. Implementación de patrón "Highlander" para imagen principal: si esta imagen
-           se marca como principal, automáticamente desmarca cualquier otra imagen principal
-           existente de la misma propiedad, garantizando unicidad sin lanzar errores de validación.
-        """
-        # 1. Generación automática de texto alternativo para accesibilidad y SEO
         if not self.alt_text:
-            if self.titulo:
-                self.alt_text = f"{self.titulo} - {self.propiedad.titulo}"
-            else:
-                self.alt_text = f"Imagen de {self.propiedad.titulo}"
-        
-        # 2. Patrón "Highlander": Solo puede haber una imagen principal
+            self.alt_text = self.titulo if self.titulo else f"Imagen de {self.propiedad.titulo}"
         if self.es_principal:
-            ImagenPropiedad.objects.filter(
-                propiedad=self.propiedad,
-                es_principal=True
-            ).exclude(pk=self.pk).update(es_principal=False)
-        
+            ImagenPropiedad.objects.filter(propiedad=self.propiedad, es_principal=True).exclude(pk=self.pk).update(es_principal=False)
         super().save(*args, **kwargs)
-
+    
     def __str__(self):
-        """Representación en string del modelo para el admin de Django."""
-        principal = " [PRINCIPAL]" if self.es_principal else ""
-        return f"{self.propiedad.titulo} - Imagen {self.orden}{principal}"
+        return f"Img {self.orden} - {self.propiedad.titulo}"
 
-
-# --- SIGNALS ---
-# Gestión automática del ciclo de vida de archivos de imagen en el sistema de archivos.
-
+# Signals
 @receiver(post_delete, sender=ImagenPropiedad)
 def eliminar_archivo_imagen(sender, instance, **kwargs):
-    """
-    Elimina el archivo físico de imagen del sistema de archivos al borrar el registro.
-    
-    Django elimina únicamente el registro de la base de datos por defecto. Este signal
-    garantiza la eliminación del archivo físico para prevenir acumulación de archivos
-    huérfanos y optimizar el uso de almacenamiento.
-    
-    Args:
-        sender: Clase del modelo que envió la señal
-        instance: Instancia del objeto que fue eliminado
-        **kwargs: Argumentos adicionales de la señal
-    """
     if instance.imagen and os.path.isfile(instance.imagen.path):
         os.remove(instance.imagen.path)
 
-
 @receiver(pre_save, sender=ImagenPropiedad)
 def eliminar_imagen_anterior(sender, instance, **kwargs):
-    """
-    Elimina el archivo de imagen previo al actualizar con un nuevo archivo.
-    
-    Previene la acumulación de archivos obsoletos cuando se reemplaza una imagen
-    existente. Solo se ejecuta en operaciones de actualización (UPDATE), no en
-    operaciones de creación (INSERT).
-    
-    Args:
-        sender: Clase del modelo que envió la señal
-        instance: Instancia del objeto que está siendo guardado
-        **kwargs: Argumentos adicionales de la señal
-    """
-    if not instance.pk:
-        return
-    
+    if not instance.pk: return
     try:
-        imagen_anterior = ImagenPropiedad.objects.get(pk=instance.pk)
-    except ImagenPropiedad.DoesNotExist:
-        return
-    
-    if imagen_anterior.imagen and imagen_anterior.imagen != instance.imagen:
-        if os.path.isfile(imagen_anterior.imagen.path):
-            os.remove(imagen_anterior.imagen.path)
+        old = ImagenPropiedad.objects.get(pk=instance.pk)
+        if old.imagen and old.imagen != instance.imagen and os.path.isfile(old.imagen.path):
+            os.remove(old.imagen.path)
+    except: pass
