@@ -84,33 +84,77 @@
     </div>
 </div>
 
-<div class="bg-technical text-white py-5 mb-5 shadow-sm" id="stats-section">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4 mb-4 mb-md-0">
-                <div class="mb-2 text-success opacity-75"><i class="bi bi-calendar-check fs-1"></i></div>
-                <div class="d-flex justify-content-center align-items-baseline">
-                    <span class="display-4 fw-bold me-1">+</span>
-                    <h2 class="display-4 fw-bold counter-value" data-target="30">0</h2>
-                </div>
-                <p class="mb-0 text-white-50 text-uppercase small ls-1">Años de Experiencia Topográfica</p>
-            </div>
-            <div class="col-md-4 mb-4 mb-md-0">
-                <div class="mb-2 text-primary opacity-75" style="color: #6c5ce7 !important;"><i class="bi bi-folder-check fs-1"></i></div>
-                <div class="d-flex justify-content-center align-items-baseline">
-                    <span class="display-4 fw-bold me-1">+</span>
-                    <h2 class="display-4 fw-bold counter-value" data-target="500">0</h2>
-                </div>
-                <p class="mb-0 text-white-50 text-uppercase small ls-1">Proyectos Realizados</p>
-            </div>
+<div class="position-relative py-5 mb-5 overflow-hidden" id="stats-section" style="background-color: #2C3E50;">
+    
+    <div class="position-relative top-0 start-0 w-100 h-100 position-absolute" 
+         style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1920'); 
+                background-size: cover; background-position: center; opacity: 0.3;">
+    </div>
+    
+    <div class="position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(to right, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));">
+    </div>
+
+    <div class="container position-relative py-4">
+        <div class="row g-4 justify-content-center">
+            
             <div class="col-md-4">
-                <div class="mb-2 text-warning opacity-75"><i class="bi bi-geo-alt fs-1"></i></div>
-                <div class="d-flex justify-content-center align-items-baseline">
-                    <span class="display-4 fw-bold me-1">+</span>
-                    <h2 class="display-4 fw-bold counter-value" data-target="12">0</h2>
+                <div class="p-4 text-center rounded-4 h-100 border border-white border-opacity-10 shadow-sm hover-lift" 
+                     style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);">
+                    
+                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-25" style="width: 60px; height: 60px;">
+                        <i class="bi bi-calendar-check text-success fs-3"></i>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center align-items-baseline text-white">
+                        <span class="display-5 fw-bold me-1">+</span>
+                        <h2 class="display-5 fw-bold mb-0 counter-value" data-target="30">0</h2>
+                    </div>
+                    
+                    <p class="text-white-50 text-uppercase small fw-bold mt-2 ls-1 mb-0">
+                        Años de Experiencia<br>Topográfica
+                    </p>
                 </div>
-                <p class="mb-0 text-white-50 text-uppercase small ls-1">Años operando en la Zona</p>
             </div>
+
+            <div class="col-md-4">
+                <div class="p-4 text-center rounded-4 h-100 border border-white border-opacity-10 shadow-sm hover-lift"
+                     style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);">
+                    
+                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-25" style="width: 60px; height: 60px;">
+                        <i class="bi bi-folder-check text-primary fs-3"></i>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center align-items-baseline text-white">
+                        <span class="display-5 fw-bold me-1">+</span>
+                        <h2 class="display-5 fw-bold mb-0 counter-value" data-target="500">0</h2>
+                    </div>
+                    
+                    <p class="text-white-50 text-uppercase small fw-bold mt-2 ls-1 mb-0">
+                        Proyectos<br>Realizados
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-4 text-center rounded-4 h-100 border border-white border-opacity-10 shadow-sm hover-lift"
+                     style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);">
+                    
+                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-25" style="width: 60px; height: 60px;">
+                        <i class="bi bi-geo-alt text-warning fs-3"></i>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center align-items-baseline text-white">
+                        <span class="display-5 fw-bold me-1">+</span>
+                        <h2 class="display-5 fw-bold mb-0 counter-value" data-target="12">0</h2>
+                    </div>
+                    
+                    <p class="text-white-50 text-uppercase small fw-bold mt-2 ls-1 mb-0">
+                        Años operando<br>en la Zona
+                    </p>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -121,40 +165,110 @@
 </style>
 
 <script>
+    // LÓGICA DE CONTADOR ANIMADO
     document.addEventListener("DOMContentLoaded", () => {
-        const statsSection = document.getElementById("stats-section");
-        const counters = document.querySelectorAll(".counter-value");
-        let started = false;
+        const counters = document.querySelectorAll('.counter-value');
+        const speed = 200; // Mientras más alto, más lento
 
-        const startCounting = () => {
-            counters.forEach(counter => {
-                const target = +counter.getAttribute("data-target");
-                const duration = 2000;
-                const increment = target / (duration / 16);
-                let current = 0;
-                const updateCounter = () => {
-                    current += increment;
-                    if (current < target) {
-                        counter.innerText = Math.ceil(current);
-                        requestAnimationFrame(updateCounter);
-                    } else {
-                        counter.innerText = target;
-                    }
-                };
-                updateCounter();
-            });
+        // Función que anima un contador específico
+        const animateCounter = (counter) => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target'); // El número final
+                const count = +counter.innerText; // El número actual
+                
+                // Calculamos cuánto sumar en cada paso para que todos terminen al mismo tiempo
+                const inc = target / speed;
+
+                if (count < target) {
+                    // Si es decimal (ej: 12.5), redondeamos hacia arriba
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 20); // Velocidad de refresco (ms)
+                } else {
+                    counter.innerText = target; // Asegurar que termine en el número exacto
+                }
+            };
+            updateCount();
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        // OBSERVADOR: Solo inicia la animación cuando el usuario ve la sección
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 // Se activa cuando el 50% de la sección es visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !started) {
-                    startCounting();
-                    started = true;
+                if (entry.isIntersecting) {
+                    // Encontramos los contadores DENTRO de la sección visible
+                    const sectionCounters = entry.target.querySelectorAll('.counter-value');
+                    sectionCounters.forEach(counter => animateCounter(counter));
+                    
+                    // Dejamos de observar para que no se repita al subir y bajar
+                    observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.5 });
+        }, observerOptions);
 
-        if (statsSection) observer.observe(statsSection);
+        // Empezar a observar la sección de estadísticas
+        const statsSection = document.getElementById('stats-section');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+    });
+</script>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        cursor: default; /* O pointer si quieres que parezca clicable */
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px); /* Sube 5 pixeles */
+        background-color: rgba(255, 255, 255, 0.15) !important; /* Se ilumina un poco */
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Leer si venimos mandados desde el modal
+        const params = new URLSearchParams(window.location.search);
+        const action = params.get('preselect');
+
+        if (action === 'comprar') {
+            // Esperamos un poquito para asegurar que el HTML cargó
+            setTimeout(() => {
+                console.log("Automatizando Wizard...");
+
+                // PASO 1: Clic en 'Operaciones Inmobiliarias'
+                // Buscamos el botón por su función onclick, es lo más seguro
+                const btnInmo = document.querySelector("button[onclick*='inmobiliaria']");
+                
+                if (btnInmo) {
+                    btnInmo.click(); // Esto despliega el paso 2
+
+                    // PASO 2: Esperar a que aparezcan las opciones y elegir 'Comprar'
+                    setTimeout(() => {
+                        const step2 = document.getElementById('step-2');
+                        const buttons = step2.querySelectorAll('button');
+                        
+                        // Buscamos el botón que tenga la palabra "Comprar"
+                        for (let btn of buttons) {
+                            if (btn.innerText.toLowerCase().includes('comprar')) {
+                                btn.click(); // Esto despliega el formulario final
+                                
+                                // Hacemos scroll suave hacia el formulario final
+                                document.getElementById('step-4').scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                                break;
+                            }
+                        }
+                    }, 400); // 400ms de espera para la animación
+                }
+            }, 300);
+        }
     });
 </script>
 

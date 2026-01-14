@@ -87,6 +87,7 @@
         <div class="col-lg-4">
             <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px; z-index: 100;">
                 <div class="card-body p-4">
+                    
                     <h6 class="text-muted text-uppercase small fw-bold ls-1">Valor de Venta</h6>
                     {% if propiedad.precio_pesos_referencia %}
                         <h2 class="text-technical fw-bold mb-0">${{ propiedad.precio_pesos_referencia|intcomma }}</h2>
@@ -95,15 +96,49 @@
                         <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
                         <p class="text-muted small mb-4">Precio a consultar</p>
                     {% endif %}
+                    
                     <div class="d-grid gap-2 mb-4">
-                        <a href="https://wa.me/56912345678?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}%20(ID:%20{{ propiedad.id_ficha }})" class="btn btn-success fw-bold py-2 shadow-sm" target="_blank"><i class="bi bi-whatsapp me-2"></i> Consultar por WhatsApp</a>
+                        <a href="https://wa.me/56912345678?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}%20(ID:%20{{ propiedad.id_ficha }})" 
+                           class="btn btn-success fw-bold py-2 shadow-sm" target="_blank">
+                            <i class="bi bi-whatsapp me-2"></i> Consultar por WhatsApp
+                        </a>
+
+                        <a href="/?preselect=comprar#contacto-interactivo" 
+                           onclick="var m=bootstrap.Modal.getInstance(document.getElementById('modalPropiedad')); if(m) m.hide();"
+                           class="btn btn-outline-dark fw-bold py-2 shadow-sm">
+                            <i class="bi bi-person-lines-fill me-2"></i> Quiero que me contacten
+                        </a>
                     </div>
+
                     <h6 class="fw-bold text-technical mb-3">Ficha Técnica</h6>
                     <ul class="list-group list-group-flush small bg-transparent">
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Superficie</span><strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Agua</span><strong class="text-dark">{{ propiedad.get_factibilidad_agua_display }}</strong></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Topografía</span><strong class="text-dark">{{ propiedad.get_topografia_display }}</strong></li>
-                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Rol</span><strong class="text-dark">{% if propiedad.rol %}{{ propiedad.rol }}{% else %}En trámite{% endif %}</strong></li>
+                        
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                            <span class="text-muted">Superficie</span>
+                            <strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong>
+                        </li>
+                        
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                            <span class="text-muted">Agua</span>
+                            <strong class="text-dark">{{ propiedad.get_factibilidad_agua_display }}</strong>
+                        </li>
+
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                            <span class="text-muted">Luz</span>
+                            <strong class="text-dark">
+                                {{ propiedad.get_factibilidad_luz_display }}
+                                {% if 'SI' in propiedad.get_factibilidad_luz_display|upper %}
+                                    <i class="bi bi-lightbulb-fill text-warning ms-1"></i>
+                                {% else %}
+                                    <i class="bi bi-lightbulb text-muted ms-1"></i>
+                                {% endif %}
+                            </strong>
+                        </li>
+
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
+                            <span class="text-muted">Topografía</span>
+                            <strong class="text-dark">{{ propiedad.get_topografia_display }}</strong>
+                        </li>
                     </ul>
                 </div>
             </div>

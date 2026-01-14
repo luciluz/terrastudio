@@ -3,56 +3,113 @@
 
 {% block content %}
 
-<div class="position-relative text-white py-5 mb-5 overflow-hidden" style="background-color: #2C3E50;">
+<div class="position-relative text-white py-5 mb-5 overflow-hidden" style="background-color: #2C3E50;" id="stats-nosotros">
     
     <div class="position-absolute top-0 start-0 w-100 h-100" 
          style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1920'); 
-                background-size: cover; background-position: center; opacity: 0.5; mix-blend-mode: luminosity;">
+                background-size: cover; background-position: center; opacity: 0.4;">
     </div>
     
     <div class="position-absolute top-0 start-0 w-100 h-100" 
-         style="background: linear-gradient(to right, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.8));">
+         style="background: linear-gradient(90deg, #1a252f 0%, rgba(44, 62, 80, 0.9) 60%, rgba(44, 62, 80, 0.7) 100%);">
     </div>
 
-    <div class="container position-relative py-5">
-        <div class="row align-items-center text-center text-lg-start">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <span class="text-uppercase fw-bold" 
-                  style="letter-spacing: 3px; font-size: 0.9rem; color: #4ade80; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-                    Nuestra Esencia
-                </span>
-                <h1 class="display-4 fw-bold mt-2 mb-3">Expertos en Tierra y Gestión Inmobiliaria</h1>
-                <p class="lead text-white-50 mx-auto mx-lg-0" style="max-width: 500px;">
+    <div class="container position-relative py-4 py-lg-5">
+        <div class="row align-items-center">
+            
+            <div class="col-lg-6 mb-5 mb-lg-0 pe-lg-5 text-center text-lg-start">
+                <div class="d-inline-block border border-success border-opacity-50 rounded-pill px-3 py-1 mb-3 bg-dark bg-opacity-25 backdrop-blur">
+                    <span class="text-uppercase fw-bold text-success" style="letter-spacing: 2px; font-size: 0.75rem;">
+                        Nuestra Esencia
+                    </span>
+                </div>
+                
+                <h1 class="display-5 fw-bold mb-3">Expertos en Tierra y Gestión Inmobiliaria</h1>
+                
+                <p class="lead text-light opacity-75 mb-4" style="line-height: 1.8;">
                     Desde 2013, transformando problemas complejos en soluciones claras. 
-                    No solo vendemos propiedades, entregamos certeza jurídica y técnica en cada momento del proceso.
+                    Entregamos certeza jurídica y técnica en cada momento del proceso.
                 </p>
+                
+                <div class="d-flex justify-content-center justify-content-lg-start">
+                    <div style="height: 4px; width: 60px; background-color: #198754; border-radius: 2px;"></div>
+                </div>
             </div>
 
             <div class="col-lg-6">
-                <div class="d-flex flex-wrap justify-content-center justify-content-lg-end gap-3 gap-md-4">
-                    <div class="text-center">
-                        <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
-                            <h3 class="fw-bold mb-0 display-5">+12</h3>
-                            <span class="text-uppercase small ls-1">Años Exp.</span>
+                <div class="row g-4 justify-content-center">
+                    
+                    <div class="col-6 col-md-4">
+                        <div class="p-3 text-center rounded-3 bg-white bg-opacity-10 h-100 border border-white border-opacity-10 shadow-sm hover-lift">
+                            <i class="bi bi-calendar-check text-success fs-2 mb-2"></i>
+                            
+                            <div class="d-flex justify-content-center align-items-baseline">
+                                <span class="fw-bold display-6">+</span>
+                                <h2 class="fw-bold mb-0 display-6 counter-value" data-target="12">0</h2>
+                            </div>
+                            
+                            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                Años de<br>Trayectoria
+                            </small>
                         </div>
                     </div>
-                    <div class="text-center">
-                         <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
-                            <h3 class="fw-bold mb-0 display-5">+100</h3>
-                            <span class="text-uppercase small ls-1 text-white-50">Proyectos</span>
+
+                    <div class="col-6 col-md-4">
+                        <div class="p-3 text-center rounded-3 bg-white bg-opacity-10 h-100 border border-white border-opacity-10 shadow-sm hover-lift">
+                            <i class="bi bi-folder-check text-success fs-2 mb-2"></i>
+                            
+                            <div class="d-flex justify-content-center align-items-baseline">
+                                <span class="fw-bold display-6">+</span>
+                                <h2 class="fw-bold mb-0 display-6 counter-value" data-target="500">0</h2>
+                            </div>
+
+                            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                Proyectos<br>Realizados
+                            </small>
                         </div>
                     </div>
-                    <div class="text-center">
-                         <div class="stat-bubble border border-white border-opacity-25 border-2 rounded-circle d-flex flex-column align-items-center justify-content-center bg-technical mx-auto">
-                            <h3 class="fw-bold mb-0 display-5">100%</h3>
-                            <span class="text-uppercase small ls-1 text-white-50">Satisfacción</span>
+
+                    <div class="col-12 col-md-4">
+                        <div class="p-3 text-center rounded-3 bg-white bg-opacity-10 h-100 border border-success border-opacity-25 shadow-sm hover-lift">
+                            <i class="bi bi-bounding-box-circles text-success fs-2 mb-2"></i>
+                            
+                            <div class="d-flex justify-content-center align-items-baseline">
+                                <span class="fw-bold display-6">+</span>
+                                <h2 class="fw-bold mb-0 display-6 counter-value" data-target="250">0</h2>
+                                <span class="fw-bold display-6">k</span>
+                            </div>
+
+                            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                m&sup2; Gestionados<br>Integralmente
+                            </small>
                         </div>
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    .hover-lift { transition: transform 0.3s ease, background-color 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-5px); background-color: rgba(255, 255, 255, 0.15) !important; }
+    .backdrop-blur { backdrop-filter: blur(5px); }
+</style>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        background-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    .backdrop-blur {
+        backdrop-filter: blur(5px);
+    }
+</style>
 
 <style>
     .stat-bubble {
@@ -91,7 +148,7 @@
                         </div>
                         <div>
                             <h5 class="fw-bold text-technical">Diagnóstico de Viabilidad</h5>
-                            <p class="text-muted small mb-0">Respondemos la pregunta nº1: <strong>¿Tiene solución?</strong> Analizamos la factibilidad técnica y legal real del terreno.</p>
+                            <p class="text-muted small mb-0"> Analizamos la factibilidad técnica y legal real del terreno.</p>
                         </div>
                     </div>
                 </div>
@@ -106,7 +163,7 @@
                         </div>
                         <div>
                             <h5 class="fw-bold text-technical">Claridad en Tiempos</h5>
-                            <p class="text-muted small mb-0">Definimos desde el día uno el presupuesto exacto y el cronograma estimado para tu trámite.</p>
+                            <p class="text-muted small mb-0">Definimos desde el inicio el presupuesto exacto y el cronograma estimado para tu trámite.</p>
                         </div>
                     </div>
                 </div>
@@ -267,45 +324,89 @@
     }
 </style>
 
+{% load static %}
+
 <div class="container mb-5">
     <div class="text-center mb-5">
         <h2 class="text-technical fw-bold">Equipo Profesional</h2>
-        <p class="text-muted">La experiencia detrás de cada gestión.</p>
+        <p class="text-muted">Un equipo multidisciplinario uniendo experiencia técnica, legal y digital.</p>
     </div>
     
+    <div class="row justify-content-center g-4 mb-4">
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="text-center hover-lift p-4 rounded-4 h-100 bg-white border border-light shadow-sm">
+                <div class="mx-auto mb-3 position-relative">
+                    <img src="{% static 'img/equipo/braulio.jpg' %}" 
+                         alt="Braulio Ruz"
+                         class="rounded-circle shadow-sm object-fit-cover" 
+                         style="width: 130px; height: 130px;">
+                </div>
+                <h5 class="fw-bold text-technical mb-1">Braulio Ruz Cerpa</h5>
+                <small class="text-success fw-bold text-uppercase d-block mb-3">Socio Fundador & Topógrafo</small>
+                <p class="text-muted small px-2">Más de 30 años de experiencia liderando proyectos de ingeniería, mensura y gestión territorial compleja.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="text-center hover-lift p-4 rounded-4 h-100 bg-white border border-light shadow-sm">
+                <div class="mx-auto mb-3 position-relative">
+                    <img src="{% static 'img/equipo/javiera.jpg' %}" 
+                         alt="Javiera Cortes"
+                         class="rounded-circle shadow-sm object-fit-cover" 
+                         style="width: 130px; height: 130px;">
+                </div>
+                <h5 class="fw-bold text-technical mb-1">Javiera Catalina Cortes F.</h5>
+                <small class="text-success fw-bold text-uppercase d-block mb-3">Abogada Inmobiliaria</small>
+                <p class="text-muted small px-2">Especialista en estudio de títulos, posesiones efectivas, saneamiento legal y redacción de escrituras.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="text-center hover-lift p-4 rounded-4 h-100 bg-white border border-light shadow-sm">
+                <div class="mx-auto mb-3 position-relative">
+                    <img src="{% static 'img/equipo/nimsy.jpg' %}" 
+                         alt="Nimsy Bahamondes"
+                         class="rounded-circle shadow-sm object-fit-cover" 
+                         style="width: 130px; height: 130px;">
+                </div>
+                <h5 class="fw-bold text-technical mb-1">Nimsy Bahamondes Ceballos</h5>
+                <small class="text-success fw-bold text-uppercase d-block mb-3">Arquitecta</small>
+                <p class="text-muted small px-2">Gestión experta en permisos de edificación, regularizaciones municipales y subdivisiones prediales.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="row justify-content-center g-4">
-        <div class="col-md-4">
-            <div class="text-center hover-lift p-3 rounded-4">
-                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center overflow-hidden" style="width: 120px; height: 120px;">
-                    <i class="bi bi-person-fill text-muted fs-1"></i>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="text-center hover-lift p-4 rounded-4 h-100 bg-white border border-light shadow-sm">
+                <div class="mx-auto mb-3 position-relative">
+                    <img src="{% static 'img/equipo/scarlett.jpg' %}" 
+                         alt="Scarlett Nova"
+                         class="rounded-circle shadow-sm object-fit-cover" 
+                         style="width: 130px; height: 130px;">
                 </div>
-                <h5 class="fw-bold text-technical mb-0">Braulio Ruz Cerpa</h5>
-                <small class="text-success fw-bold text-uppercase">Fundador & Topógrafo</small>
-                <p class="text-muted small mt-2 px-3">Más de 30 años de experiencia en ingeniería, docencia y gestión de proyectos complejos.</p>
+                <h5 class="fw-bold text-technical mb-1">Scarlett Nova Telgie</h5>
+                <small class="text-success fw-bold text-uppercase d-block mb-3">Coordinadora de Proyectos</small>
+                <p class="text-muted small px-2">El nexo vital de nuestra gestión. Coordina flujos de trabajo, atención al cliente y seguimiento de trámites.</p>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="text-center hover-lift p-3 rounded-4">
-                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
-                    <i class="bi bi-file-text-fill text-muted fs-1"></i>
+        <div class="col-md-6 col-lg-4">
+            <div class="text-center hover-lift p-4 rounded-4 h-100 bg-white border border-light shadow-sm">
+                <div class="mx-auto mb-3 position-relative">
+                    <img src="{% static 'img/equipo/luciano.jpg' %}" 
+                         alt="Luciano Ruz"
+                         class="rounded-circle shadow-sm object-fit-cover" 
+                         style="width: 130px; height: 130px;">
                 </div>
-                <h5 class="fw-bold text-technical mb-0">Área Legal</h5>
-                <small class="text-success fw-bold text-uppercase">Abogados Asociados</small>
-                <p class="text-muted small mt-2 px-3">Especialistas en estudio de títulos, posesiones efectivas y derecho inmobiliario.</p>
+                <h5 class="fw-bold text-technical mb-1">Luciano Ruz Veloso</h5>
+                <small class="text-success fw-bold text-uppercase d-block mb-3">Ingeniero de Software & Analítica</small>
+                <p class="text-muted small px-2">Impulsando la transformación digital, análisis de mercado basado en datos y modernización de procesos.</p>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="text-center hover-lift p-3 rounded-4">
-                <div class="bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
-                    <i class="bi bi-building text-muted fs-1"></i>
-                </div>
-                <h5 class="fw-bold text-technical mb-0">Área Técnica</h5>
-                <small class="text-success fw-bold text-uppercase">Arquitectura & Urbanismo</small>
-                <p class="text-muted small mt-2 px-3">Gestión de permisos de edificación, subdivisiones prediales y proyectos urbanos.</p>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -315,5 +416,45 @@
     .ls-1 { letter-spacing: 1px; }
     .ls-2 { letter-spacing: 2px; }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const speed = 200; 
+
+        const animateCounter = (counter) => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target; 
+                }
+            };
+            updateCount();
+        };
+
+        const observerOptions = { threshold: 0.5 };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionCounters = entry.target.querySelectorAll('.counter-value');
+                    sectionCounters.forEach(counter => animateCounter(counter));
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // AQUÍ ESTÁ LA CLAVE: Observamos el ID de esta sección
+        const statsSection = document.getElementById('stats-nosotros');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+    });
+</script>
 
 {% endblock %}

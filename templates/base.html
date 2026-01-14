@@ -141,7 +141,6 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'servicios' %}">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'catalogo' %}">Propiedades</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#recursos">Recursos</a></li>
                     <li class="nav-item ms-md-3 mt-3 mt-md-0">
                         <a class="btn btn-terra-outline px-4 rounded-pill" href="#contacto-interactivo">Contacto</a>
                     </li>
@@ -303,7 +302,7 @@
                             <div class="col-md-8">
                                 <div class="card bg-light border-0 p-4 rounded-4 text-center">
                                     <h5 class="fw-bold text-technical mb-3">¡Perfecto!</h5>
-                                    <p class="small text-muted mb-4">Déjanos tus datos para hablar sobre <span id="summary-text" class="fw-bold text-success">tu proyecto</span>.</p>
+                                    <p class="small text-muted mb-4">Déjanos tus datos para que charlemos
                                     
                                     <form action="#" method="POST">
                                         <div class="row g-3 text-start">
@@ -339,7 +338,7 @@
             </div>
         </div>
     </section>
-
+    {% comment %}
     <section class="py-5 bg-white border-top" id="recursos">
         <div class="container">
             <div class="d-flex justify-content-between align-items-end mb-5">
@@ -394,13 +393,14 @@
             </div>
         </div>
     </section>
+    {% endcomment %}
 
     <script>
         // DATOS DE SUB-SERVICIOS
         const subOpciones = {
             'inmobiliaria': [
-                {icon: 'bi-house-check', text: 'Quiero Comprar'},
-                {icon: 'bi-currency-dollar', text: 'Quiero Vender'},
+                {icon: 'bi-house-check', text: 'Me interesa Comprar'},
+                {icon: 'bi-currency-dollar', text: 'Me interesa Vender'},
                 {icon: 'bi-key', text: 'Gestión / Arriendo'}
             ],
             'topografia': [
