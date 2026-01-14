@@ -20,3 +20,14 @@ a.text-technical {
 a.text-technical:hover {
     color: #198754; /* Un verde al pasar el mouse sobre el título */
 }
+
+/* Utilidad para cortar texto a 2 líneas */
+.text-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    height: 2.8em; /* 1.4 line-height * 2 líneas = 2.8em */
+}
