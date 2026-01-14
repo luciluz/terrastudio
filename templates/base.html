@@ -637,120 +637,121 @@
         }
     </script>
     
-    <div class="modal fade" id="modalPropiedad" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content rounded-4 border-0">
-                <div class="modal-header border-0 pb-0"><button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body pt-0 px-4 pb-4" id="modal-body-content"></div>
+<div class="modal fade" id="modalPropiedad" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" id="modal-content-body">
+            <div class="text-center py-5">
+                <div class="spinner-border text-success" role="status"></div>
             </div>
         </div>
     </div>
-    <script>
-        function abrirModalPropiedad(url) {
-            var myModal = new bootstrap.Modal(document.getElementById('modalPropiedad'));
-            var contentDiv = document.getElementById('modal-body-content');
-            contentDiv.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-success"></div></div>';
-            myModal.show();
-            fetch(url, {'headers': {'X-Requested-With': 'XMLHttpRequest'}})
-            .then(r => r.text()).then(h => contentDiv.innerHTML = h);
+</div>
+
+<style>
+    /* 1. Estilos para centrado y flechas */
+    #lightbox-overlay {
+        backdrop-filter: blur(5px); /* Efecto borroso pro */
+    }
+    
+    .lightbox-nav {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .lightbox-nav:hover { background-color: rgba(0,0,0,0.9); }
+
+    /* 2. REGLA DE ORO PARA MÓVIL: OCULTAR FLECHAS Y AJUSTAR IMAGEN */
+    @media (max-width: 768px) {
+        .lightbox-arrow-btn {
+            display: none !important; /* Fuerza bruta para que no aparezcan */
         }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Buscamos la barra de navegación colapsable
-            var navMain = document.getElementById('navbarNav');
-            
-            // Buscamos todos los links DENTRO de esa barra (incluyendo el botón contacto)
-            var navLinks = navMain.querySelectorAll('a');
-
-            navLinks.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    // Si el menú está abierto (tiene la clase show), lo cerramos
-                    if (navMain.classList.contains('show')) {
-                        var bsCollapse = bootstrap.Collapse.getInstance(navMain);
-                        if (bsCollapse) {
-                            bsCollapse.hide();
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-<script>
-    // Función para cambiar de imagen (Flechas)
-    function moveGallery(direction) {
-        const mainImg = document.getElementById('mainImage');
-        if (!mainImg) return;
-
-        // Recuperamos la lista de imágenes desde el atributo data
-        const imagesStr = mainImg.dataset.galleryImages;
-        if (!imagesStr) return;
-
-        const allImages = imagesStr.split(','); 
-        let currentIndex = parseInt(mainImg.dataset.currentIndex || 0);
-
-        // Calcular nuevo índice
-        currentIndex += direction;
-
-        // Lógica de carrusel infinito
-        if (currentIndex >= allImages.length) currentIndex = 0;
-        if (currentIndex < 0) currentIndex = allImages.length - 1;
-
-        // Actualizar todo
-        updateImageDisplay(mainImg, allImages[currentIndex], currentIndex);
+        #lightbox-img-tag {
+            max-height: 65vh !important; /* Más pequeña en móvil para centrarla bien arriba de las miniaturas */
+        }
+        .lightbox-thumbs {
+            padding-bottom: 20px; /* Levantar un poco las miniaturas del borde inferior */
+        }
     }
+</style>
 
-    // Función para seleccionar miniatura específica
-    function jumpToImage(index) {
-        const mainImg = document.getElementById('mainImage');
-        if (!mainImg) return;
-
-        const imagesStr = mainImg.dataset.galleryImages;
-        if (!imagesStr) return;
+<div id="lightbox-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; justify-content: center; align-items: center;">
+    
+    <button onclick="closeLightbox(null)" class="btn-close btn-close-white" 
+            style="position: absolute; top: 20px; right: 20px; z-index: 10002; width: 2rem; height: 2rem; opacity: 1;"></button>
+    
+    <div class="position-relative d-flex justify-content-center align-items-center w-100" 
+         style="flex: 1; padding: 0 70px;">
         
-        const allImages = imagesStr.split(',');
-        
-        // Aseguramos que index sea un número
-        index = parseInt(index);
-        
-        updateImageDisplay(mainImg, allImages[index], index);
-    }
+        <button class="lightbox-arrow-btn" onclick="changeLightboxImage(-1)" 
+                style="position: absolute; left: 20px; z-index: 10001; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 2rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer;">
+            &#10094;
+        </button>
 
-    // Función auxiliar visual (Actualiza Imagen y Bordes)
-    function updateImageDisplay(imgElement, newUrl, newIndex) {
-        // PASO 1: Cambiar la imagen principal con efecto
-        imgElement.style.opacity = 0.5;
-        setTimeout(() => {
-            imgElement.src = newUrl;
-            imgElement.style.opacity = 1;
-        }, 150);
+        <img id="lightbox-img-tag" src="" 
+             style="max-width: 100%; max-height: 85vh; object-fit: contain;">
 
-        // Guardamos el nuevo índice
-        imgElement.dataset.currentIndex = newIndex;
+        <button class="lightbox-arrow-btn" onclick="changeLightboxImage(1)" 
+                style="position: absolute; right: 20px; z-index: 10001; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 2rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer;">
+            &#10095;
+        </button>
+    </div>
 
-        // PASO 2: Actualizar los bordes de las miniaturas
-        // Buscamos todas las miniaturas por su clase 'gallery-thumb'
-        const thumbnails = document.querySelectorAll('.gallery-thumb');
-        
-        thumbnails.forEach((thumb, index) => {
-            if (index === newIndex) {
-                // Si es la imagen actual, ponemos el borde azul
-                thumb.classList.add('border-primary');
-                thumb.classList.remove('border-0');
-            } else {
-                // Si no es, quitamos el borde azul
-                thumb.classList.remove('border-primary');
-                thumb.classList.add('border-0');
-            }
-        });
-    }
-</script>
+    <div class="lightbox-thumbs d-flex gap-2 px-3" 
+         style="max-width: 100vw; height: 60px; align-items: center; z-index: 10002; overflow-x: auto; padding-bottom: 20px;"></div>
+</div>
+
+
 <script>
     // --- VARIABLES GLOBALES ---
     let galleryImages = [];
     let currentImageIndex = 0;
+    
+    // Variables Swipe
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-    // 1. FUNCION: Ver más / Ver menos descripción
+    // --- LÓGICA NAVBAR ---
+    document.addEventListener('DOMContentLoaded', function() {
+        var navMain = document.getElementById('navbarNav');
+        if(navMain) {
+            var navLinks = navMain.querySelectorAll('a');
+            navLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (navMain.classList.contains('show')) {
+                        var bsCollapse = bootstrap.Collapse.getInstance(navMain);
+                        if (bsCollapse) bsCollapse.hide();
+                    }
+                });
+            });
+        }
+    });
+
+    // --- FUNCIONES MODAL ---
+    const modalPropiedad = new bootstrap.Modal(document.getElementById('modalPropiedad'));
+
+    function abrirModalPropiedad(url) {
+        document.getElementById('modal-content-body').innerHTML = 
+            '<div class="text-center py-5"><div class="spinner-border text-success" role="status"></div></div>';
+        
+        modalPropiedad.show();
+
+        fetch(url, {'headers': {'X-Requested-With': 'XMLHttpRequest'}})
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modal-content-body').innerHTML = html;
+        })
+        .catch(err => console.error('Error cargando propiedad:', err));
+    }
+
+    // --- FUNCIONES VISUALES ---
     function toggleDescription() {
         const shortDesc = document.getElementById('desc-short');
         const fullDesc = document.getElementById('desc-full');
@@ -769,12 +770,10 @@
         }
     }
 
-    // 2. FUNCION: Cambiar imagen principal desde miniaturas
-    function updateMainImage(src) {
+   function updateMainImage(src) {
         const mainImg = document.getElementById('mainImage');
         if (mainImg) mainImg.src = src;
 
-        // Actualizar bordes de miniaturas
         document.querySelectorAll('.thumb-item').forEach(img => {
             if (img.src === src) {
                 img.classList.remove('border-transparent', 'opacity-75');
@@ -786,34 +785,39 @@
         });
     }
 
-    // 3. FUNCION: Abrir Lightbox (Pantalla Completa)
-    function openLightbox() {
-        // A. Leer las imágenes del input oculto que pusimos en el modal
-        const csvInput = document.getElementById('gallery-data-csv');
-        if (!csvInput) return; // Si no hay datos, no hacemos nada
+    // --- FUNCIONES LIGHTBOX ---
 
-        // B. Convertir CSV a Array y limpiar duplicados
+    function openLightbox() {
+        const csvInput = document.getElementById('gallery-data-csv');
+        if (!csvInput) return; 
+
         const rawList = csvInput.value.split(',');
         galleryImages = [...new Set(rawList)].filter(url => url.trim() !== '');
 
-        // C. Detectar índice actual
         const currentSrc = document.getElementById('mainImage').src;
-        // Buscamos coincidencias (usamos 'includes' por si hay dominios relativos/absolutos)
         let index = galleryImages.findIndex(url => currentSrc.includes(url.trim()));
         if (index === -1) index = 0;
         currentImageIndex = index;
 
-        // D. Mostrar Lightbox
         updateLightboxContent();
-        document.getElementById('lightbox-overlay').style.display = 'flex';
+        const overlay = document.getElementById('lightbox-overlay');
+        overlay.style.display = 'flex';
         
-        // E. Generar miniaturas del lightbox
+        // AGREGAR TOUCH LISTENERS AQUÍ (cuando ya existe el elemento)
+        overlay.addEventListener('touchstart', handleTouchStart, {passive: true});
+        overlay.addEventListener('touchend', handleTouchEnd, {passive: true});
+        
+        // Generar miniaturas lightbox
         const thumbsContainer = document.querySelector('.lightbox-thumbs');
         thumbsContainer.innerHTML = '';
         galleryImages.forEach((src, idx) => {
             const img = document.createElement('img');
             img.src = src;
-            img.className = 'lightbox-thumb-img ' + (idx === currentImageIndex ? 'active' : '');
+            img.style.height = '50px'; 
+            img.style.width = '50px';
+            img.style.objectFit = 'cover';
+            img.style.cursor = 'pointer';
+            img.className = 'rounded-3 flex-shrink-0 ' + (idx === currentImageIndex ? 'border border-2 border-white opacity-100' : 'opacity-50');
             img.onclick = () => { currentImageIndex = idx; updateLightboxContent(); };
             thumbsContainer.appendChild(img);
         });
@@ -838,14 +842,34 @@
         const imgTag = document.getElementById('lightbox-img-tag');
         if(imgTag) imgTag.src = src;
         
-        // Highlight miniaturas
-        document.querySelectorAll('.lightbox-thumb-img').forEach((el, idx) => {
-            el.classList.toggle('active', idx === currentImageIndex);
+        const thumbs = document.querySelector('.lightbox-thumbs').children;
+        Array.from(thumbs).forEach((el, idx) => {
+            el.className = 'rounded-3 flex-shrink-0 ' + (idx === currentImageIndex ? 'border border-2 border-white opacity-100' : 'opacity-50');
             if (idx === currentImageIndex) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         });
     }
 
-    // Navegación con Teclado
+    // --- LÓGICA SWIPE (Deslizar dedo) ---
+    function handleTouchStart(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }
+
+    function handleTouchEnd(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }
+
+    function handleSwipe() {
+        // Umbral de sensibilidad (50px)
+        if (touchEndX < touchStartX - 50) {
+            changeLightboxImage(1); // Deslizar izquierda -> Siguiente
+        }
+        if (touchEndX > touchStartX + 50) {
+            changeLightboxImage(-1); // Deslizar derecha -> Anterior
+        }
+    }
+
+    // Teclado (PC)
     document.addEventListener('keydown', function(e) {
         const overlay = document.getElementById('lightbox-overlay');
         if (overlay && overlay.style.display === 'flex') {
@@ -853,6 +877,39 @@
             if (e.key === 'ArrowRight') changeLightboxImage(1);
             if (e.key === 'Escape') closeLightbox(null);
         }
+    });
+    // Swipe en la imagen principal para cambiar entre fotos
+    document.addEventListener('DOMContentLoaded', function() {
+        let mainImgTouchStartX = 0;
+        let mainImgTouchEndX = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            const mainImg = document.getElementById('mainImage');
+            if (mainImg && e.target === mainImg) {
+                mainImgTouchStartX = e.changedTouches[0].screenX;
+            }
+        }, {passive: true});
+        
+        document.addEventListener('touchend', function(e) {
+            const mainImg = document.getElementById('mainImage');
+            if (mainImg && e.target === mainImg) {
+                mainImgTouchEndX = e.changedTouches[0].screenX;
+                
+                const thumbs = Array.from(document.querySelectorAll('.thumb-item'));
+                const currentIndex = thumbs.findIndex(t => t.classList.contains('border-primary'));
+                
+                if (mainImgTouchEndX < mainImgTouchStartX - 50) {
+                    // Swipe izquierda -> siguiente imagen
+                    const nextIndex = (currentIndex + 1) % thumbs.length;
+                    thumbs[nextIndex].click();
+                }
+                else if (mainImgTouchEndX > mainImgTouchStartX + 50) {
+                    // Swipe derecha -> imagen anterior
+                    const prevIndex = currentIndex - 1 < 0 ? thumbs.length - 1 : currentIndex - 1;
+                    thumbs[prevIndex].click();
+                }
+            }
+        }, {passive: true});
     });
 </script>
 </body>

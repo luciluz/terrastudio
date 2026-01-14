@@ -29,6 +29,10 @@
     .lightbox-prev { left: 20px; } .lightbox-next { right: 20px; }
 </style>
 
+<div class="modal-header border-0 pb-0">
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
 <div class="modal-body pt-0">
     <div class="row">
         <div class="col-lg-8">
@@ -37,7 +41,9 @@
                      class="img-fluid w-100 object-fit-cover" style="height: 450px; cursor: zoom-in;" 
                      alt="{{ propiedad.titulo }}"
                      onclick="openLightbox()"> <span class="position-absolute top-0 start-0 m-3 badge bg-success shadow">{{ propiedad.get_operacion_display }}</span>
-                <div class="position-absolute bottom-0 end-0 m-3 text-white bg-dark bg-opacity-50 px-2 py-1 rounded small pointer-events-none">
+                <div class="position-absolute bottom-0 end-0 m-3 text-white bg-dark bg-opacity-50 px-2 py-1 rounded small" 
+                    style="cursor: pointer;" 
+                    onclick="openLightbox()">
                     <i class="bi bi-arrows-fullscreen me-1"></i> Ampliar
                 </div>
             </div>
@@ -108,9 +114,7 @@
 <div id="lightbox-overlay" onclick="closeLightbox(event)">
     <button onclick="closeLightbox(null)" class="btn-close btn-close-white position-absolute top-0 end-0 m-4 fs-4"></button>
     <div class="position-relative" onclick="event.stopPropagation()">
-        <button class="lightbox-nav lightbox-prev" onclick="changeLightboxImage(-1)">&#10094;</button>
         <img id="lightbox-img-tag" src="" class="lightbox-img shadow-lg">
-        <button class="lightbox-nav lightbox-next" onclick="changeLightboxImage(1)">&#10095;</button>
     </div>
     <div class="lightbox-thumbs" onclick="event.stopPropagation()"></div>
 </div>

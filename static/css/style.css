@@ -31,3 +31,30 @@ a.text-technical:hover {
     line-height: 1.4;
     height: 2.8em; /* 1.4 line-height * 2 líneas = 2.8em */
 }
+
+/* Estilo para las flechas de navegación del Lightbox */
+.lightbox-nav {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo negro semitransparente */
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Círculo perfecto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.lightbox-nav:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Ocultar flechas en móvil */
+@media (max-width: 768px) {
+    .lightbox-arrow-btn {
+        display: none !important;
+    }
+}
