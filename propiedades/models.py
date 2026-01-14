@@ -209,6 +209,23 @@ class Propiedad(models.Model):
     
     def __str__(self):
         return f"{self.id_ficha} | {self.titulo}"
+    
+    @property
+    def precio_uf_visual(self):
+        if self.precio_uf:
+            # 1. Formateamos a 2 decimales con separador de miles gringo (1,234.56)
+            valor = f"{self.precio_uf:,.2f}"
+            # 2. Invertimos los signos para formato chileno (1.234,56)
+            return valor.replace(",", "X").replace(".", ",").replace("X", ".")
+        return "0,00"
+    
+    @property
+    def ubicacion_visual(self):
+        # Si tiene sector, retorna "Sector, Comuna"
+        if self.sector:
+            return f"{self.sector}, {self.comuna}"
+        # Si no, solo "Comuna"
+        return self.comuna
 
 
 # Modelo Imágenes (Igual que antes, solo asegúrate de tenerlo)

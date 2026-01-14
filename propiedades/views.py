@@ -18,7 +18,7 @@ def inicio(request):
     context = {
         'propiedades': propiedades_destacadas
     }
-    return render(request, 'propiedades/inicio.html', context)
+    return render(request, 'inicio.html', context)
 
 def nosotros(request):
     propiedades_destacadas = Propiedad.objects.filter(
@@ -46,19 +46,20 @@ def catalogo(request):
 
     return render(request, 'propiedades/catalogo.html', context)
 
+# En views.py
+
 def detalle_propiedad(request, slug):
-    # NOTA: Aquí usamos get_object_or_404 directamente sobre Propiedad.
-    # Esto permite que si tú compartes el link directo de una propiedad 'oculta' (pack),
-    # el link funcione (porque existe), aunque no aparezca en el catálogo general.
-    # Si quisieras que el link dé error 404, tendrías que filtrar aquí también.
+
     propiedad = get_object_or_404(Propiedad, slug=slug)
     
-    # 1. Si es AJAX (Clic desde la misma web): Devuelve solo el HTML del modal
+    # CASO A: SI ES AJAX (Click desde dentro de la web)
+    # Devolvemos solo el HTML interno del modal (rápido y ligero)
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'propiedades/detalle_content.html', {'propiedad': propiedad})
     
-    # 2. Si es Link Directo (Compartido por WhatsApp):
-    # Cargamos el catálogo de fondo, PERO filtrado igual que arriba
+    # CASO B: SI ES LINK DIRECTO (WhatsApp, Facebook, copiar link)
+    # Cargamos el catálogo completo de fondo para que no se vea vacío
+    # Copiamos la misma consulta que usas en la vista 'catalogo'
     todas_las_propiedades = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
@@ -66,11 +67,14 @@ def detalle_propiedad(request, slug):
         plataformas_publicadas__contains='TERRA_WEB'
     ).order_by('-fecha_ingreso')
     
-    return render(request, 'propiedades/catalogo.html', {
-        'propiedades': todas_las_propiedades,
-        'propiedad_activa_slug': slug, 
-        'is_catalog_page': True
-    })
+    context = {
+        'propiedades': todas_las_propiedades, # El fondo (catálogo)
+        'modal_open_slug': slug,            # LA SEÑAL para que JS abra el modal solo
+        'is_catalog_page': True             # Para que el navbar sepa dónde estamos
+    }
+    
+    # Renderizamos el catálogo, pero con la instrucción de abrir el modal
+    return render(request, 'propiedades/catalogo.html', context)
 
 def servicios(request):
     return render(request, 'servicios.html')

@@ -2,107 +2,117 @@
 
 {% with imagen_principal_url=propiedad.imagen_principal.imagen.url|default:"https://via.placeholder.com/800x500" %}
 
-<div class="row">
-    <div class="col-lg-8">
-        
-        <div class="mb-4 shadow-sm rounded-4 overflow-hidden position-relative bg-dark">
-            
-            <img id="mainImage" 
-                 src="{{ imagen_principal_url }}" 
-                 
-                 {# 1. Generamos la lista SOLO con el bucle para evitar duplicados #}
-                 data-gallery-images="{% for img in propiedad.imagenes.all %}{{ img.imagen.url }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                 
-                 {# 2. Buscamos en qué posición (índice) está la imagen principal actual #}
-                 data-current-index="{% for img in propiedad.imagenes.all %}{% if img.imagen.url == imagen_principal_url %}{{ forloop.counter0 }}{% endif %}{% endfor %}"
-                 
-                 class="img-fluid w-100 object-fit-cover" 
-                 style="height: 400px; transition: opacity 0.3s ease; cursor: pointer;" 
-                 alt="{{ propiedad.titulo }}">
+<input type="hidden" id="gallery-data-csv" 
+       value="{{ imagen_principal_url }}{% for img in propiedad.imagenes.all %},{{ img.imagen.url }}{% endfor %}">
 
-            <span class="position-absolute top-0 start-0 m-3 badge bg-success shadow">{{ propiedad.get_estado_display|default:"Disponible" }}</span>
-
-            <button onclick="moveGallery(-1)" class="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle shadow-lg bg-opacity-50 border-0 d-flex align-items-center justify-content-center hover-scale" style="width: 40px; height: 40px; z-index: 10;">
-                <i class="bi bi-chevron-left text-white"></i>
-            </button>
-
-            <button onclick="moveGallery(1)" class="btn btn-dark position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle shadow-lg bg-opacity-50 border-0 d-flex align-items-center justify-content-center hover-scale" style="width: 40px; height: 40px; z-index: 10;">
-                <i class="bi bi-chevron-right text-white"></i>
-            </button>
-        </div>
-
-        <h2 class="text-technical fw-bold mb-1">{{ propiedad.titulo }}</h2>
-        <p class="text-muted mb-4"><i class="bi bi-geo-alt-fill text-danger"></i> {{ propiedad.direccion }}, {{ propiedad.comuna }}</p>
-        
-        <div class="mb-5">
-            <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Descripción</h5>
-            <p class="text-secondary" style="line-height: 1.8;">{{ propiedad.descripcion|default:"Sin descripción detallada."|linebreaksbr }}</p>
-        </div>
-
-        {% if propiedad.imagenes.all.count > 0 %}
-        <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Galería</h5>
-        <div class="row row-cols-3 row-cols-md-4 g-2 mb-4">
-            
-            {# 3. Quitamos la miniatura manual y usamos solo el bucle #}
-            {% for img in propiedad.imagenes.all %}
-                <div class="col">
-                    <img src="{{ img.imagen.url }}" 
-                         {# Usamos counter0 (índice base 0) para que coincida con el array de JS #}
-                         onclick="jumpToImage('{{ forloop.counter0 }}')" 
-                         
-                         {# Lógica visual: Si es la principal, le ponemos el borde azul, si no, borde 0 #}
-                         class="img-thumbnail rounded-3 cursor-pointer hover-scale gallery-thumb {% if img.imagen.url == imagen_principal_url %}border-primary{% else %}border-0{% endif %}" 
-                         
-                         style="height: 80px; width: 100%; object-fit: cover;">
-                </div>
-            {% endfor %}
-            
-        </div>
-        {% endif %}
-
-    </div>
+<style>
+    /* Estilos del Modal (Mantenemos esto aquí porque son estilos visuales) */
+    .btn-leermas { color: #198754; font-weight: 600; cursor: pointer; padding: 0; background: none; border: none; font-size: 0.9rem; }
+    .btn-leermas:hover { text-decoration: underline; }
     
-    <div class="col-lg-4">
-        <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px;">
-            <div class="card-body p-4">
-                
-                <h6 class="text-muted text-uppercase small fw-bold ls-1">Valor de Venta</h6>
-                
-                {% if propiedad.precio_pesos_referencia %}
-                    <h2 class="text-technical fw-bold mb-0">${{ propiedad.precio_pesos_referencia|intcomma }}</h2>
-                    <p class="text-muted small mb-4">Valor referencial: {{ propiedad.precio_formateado }}</p>
-                {% else %}
-                    <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
-                    <p class="text-muted small mb-4">Precio en pesos a consultar</p>
-                {% endif %}
-                <div class="d-grid gap-2 mb-4">
-                    <a href="https://wa.me/56976607301?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}" class="btn btn-success fw-bold py-2" target="_blank">
-                        <i class="bi bi-whatsapp me-2"></i> Consultar ahora
-                    </a>
-                </div>
+    /* Lightbox */
+    #lightbox-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95); z-index: 9999; display: none;
+        flex-direction: column; justify-content: center; align-items: center;
+    }
+    .lightbox-img { max-width: 90%; max-height: 70vh; object-fit: contain; border-radius: 4px; }
+    .lightbox-thumbs { margin-top: 20px; display: flex; gap: 10px; overflow-x: auto; max-width: 90%; padding-bottom: 10px; }
+    .lightbox-thumb-img { height: 60px; width: auto; opacity: 0.5; cursor: pointer; border: 2px solid transparent; transition: 0.2s; border-radius: 4px; }
+    .lightbox-thumb-img.active { opacity: 1; border-color: #fff; }
+    .lightbox-nav {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        background: rgba(255,255,255,0.1); color: white; border: none;
+        font-size: 2rem; padding: 10px 20px; cursor: pointer; border-radius: 50%;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.3); }
+    .lightbox-prev { left: 20px; } .lightbox-next { right: 20px; }
+</style>
 
-                <h6 class="fw-bold text-technical mb-3">Ficha Técnica</h6>
-                <ul class="list-group list-group-flush small bg-transparent">
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
-                        <span class="text-muted"><i class="bi bi-aspect-ratio me-2"></i>Superficie</span>
-                        <strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong>
-                    </li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
-                        <span class="text-muted"><i class="bi bi-water me-2"></i>Agua</span>
-                        <strong class="text-dark">{{ propiedad.get_factibilidad_agua_display }}</strong>
-                    </li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
-                        <span class="text-muted"><i class="bi bi-layers me-2"></i>Topografía</span>
-                        <strong class="text-dark">{{ propiedad.get_topografia_display }}</strong>
-                    </li>
-                    <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10">
-                        <span class="text-muted"><i class="bi bi-file-earmark-text me-2"></i>Rol</span>
-                        <strong class="text-dark">{% if propiedad.rol %}{{ propiedad.rol }}{% else %}En trámite{% endif %}</strong>
-                    </li>
-                </ul>
+<div class="modal-body pt-0">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="mb-2 position-relative bg-dark rounded-4 overflow-hidden">
+                <img id="mainImage" src="{{ imagen_principal_url }}" 
+                     class="img-fluid w-100 object-fit-cover" style="height: 450px; cursor: zoom-in;" 
+                     alt="{{ propiedad.titulo }}"
+                     onclick="openLightbox()"> <span class="position-absolute top-0 start-0 m-3 badge bg-success shadow">{{ propiedad.get_operacion_display }}</span>
+                <div class="position-absolute bottom-0 end-0 m-3 text-white bg-dark bg-opacity-50 px-2 py-1 rounded small pointer-events-none">
+                    <i class="bi bi-arrows-fullscreen me-1"></i> Ampliar
+                </div>
+            </div>
+
+            {% if propiedad.imagenes.all.count > 0 %}
+            <div class="d-flex gap-2 mb-4 overflow-auto pb-2" style="scrollbar-width: thin;">
+                <img src="{{ imagen_principal_url }}" onclick="updateMainImage(this.src)"
+                     class="rounded-3 cursor-pointer border border-2 border-primary thumb-item" 
+                     style="height: 70px; width: 70px; object-fit: cover; flex-shrink: 0;">
+                
+                {% for img in propiedad.imagenes.all %}
+                    {% if img.imagen.url != imagen_principal_url %}
+                    <img src="{{ img.imagen.url }}" onclick="updateMainImage(this.src)" 
+                         class="rounded-3 cursor-pointer border border-transparent opacity-75 hover-opacity-100 thumb-item" 
+                         style="height: 70px; width: 70px; object-fit: cover; flex-shrink: 0;">
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <h2 class="text-technical fw-bold mb-2">{{ propiedad.titulo }}</h2>
+            
+            <div class="d-flex flex-wrap align-items-center text-muted mb-4 gap-3">
+                <div class="d-flex align-items-center"><i class="bi bi-geo-alt-fill text-danger me-2 fs-5"></i> <span class="fs-6">{{ propiedad.ubicacion_visual }}</span></div>
+                <div class="border-start border-2 h-100 mx-1 d-none d-sm-block" style="height: 20px;"></div>
+                <div class="d-flex align-items-center bg-light px-3 py-1 rounded-pill border"><i class="bi bi-aspect-ratio me-2 text-primary"></i><strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong></div>
+            </div>
+            
+            <div class="mb-5">
+                <h5 class="fw-bold text-technical border-bottom pb-2 mb-3">Descripción</h5>
+                <div id="description-container">
+                    <div id="desc-short" class="text-secondary" style="line-height: 1.8;">{{ propiedad.descripcion|default:"Sin descripción."|linebreaksbr|truncatechars_html:250 }}</div>
+                    <div id="desc-full" class="text-secondary d-none" style="line-height: 1.8;">{{ propiedad.descripcion|default:"Sin descripción."|linebreaksbr }}</div>
+                </div>
+                {% if propiedad.descripcion|length > 250 %}
+                    <button onclick="toggleDescription()" id="btn-toggle-desc" class="btn-leermas mt-2">Ver más <i class="bi bi-chevron-down ms-1"></i></button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow border-0 bg-light rounded-4 sticky-top" style="top: 20px; z-index: 100;">
+                <div class="card-body p-4">
+                    <h6 class="text-muted text-uppercase small fw-bold ls-1">Valor de Venta</h6>
+                    {% if propiedad.precio_pesos_referencia %}
+                        <h2 class="text-technical fw-bold mb-0">${{ propiedad.precio_pesos_referencia|intcomma }}</h2>
+                        <p class="text-muted small mb-4">Valor referencial: {{ propiedad.precio_uf_visual }} UF</p>
+                    {% else %}
+                        <h2 class="text-technical fw-bold mb-0">{{ propiedad.precio_formateado }}</h2>
+                        <p class="text-muted small mb-4">Precio a consultar</p>
+                    {% endif %}
+                    <div class="d-grid gap-2 mb-4">
+                        <a href="https://wa.me/56912345678?text=Hola,%20me%20interesa%20la%20propiedad:%20{{ propiedad.titulo }}%20(ID:%20{{ propiedad.id_ficha }})" class="btn btn-success fw-bold py-2 shadow-sm" target="_blank"><i class="bi bi-whatsapp me-2"></i> Consultar por WhatsApp</a>
+                    </div>
+                    <h6 class="fw-bold text-technical mb-3">Ficha Técnica</h6>
+                    <ul class="list-group list-group-flush small bg-transparent">
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Superficie</span><strong class="text-dark">{{ propiedad.superficie_total_m2|intcomma }} m²</strong></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Agua</span><strong class="text-dark">{{ propiedad.get_factibilidad_agua_display }}</strong></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Topografía</span><strong class="text-dark">{{ propiedad.get_topografia_display }}</strong></li>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between px-0 py-2 border-secondary border-opacity-10"><span class="text-muted">Rol</span><strong class="text-dark">{% if propiedad.rol %}{{ propiedad.rol }}{% else %}En trámite{% endif %}</strong></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<div id="lightbox-overlay" onclick="closeLightbox(event)">
+    <button onclick="closeLightbox(null)" class="btn-close btn-close-white position-absolute top-0 end-0 m-4 fs-4"></button>
+    <div class="position-relative" onclick="event.stopPropagation()">
+        <button class="lightbox-nav lightbox-prev" onclick="changeLightboxImage(-1)">&#10094;</button>
+        <img id="lightbox-img-tag" src="" class="lightbox-img shadow-lg">
+        <button class="lightbox-nav lightbox-next" onclick="changeLightboxImage(1)">&#10095;</button>
+    </div>
+    <div class="lightbox-thumbs" onclick="event.stopPropagation()"></div>
 </div>
 
 {% endwith %}

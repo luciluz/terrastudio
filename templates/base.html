@@ -8,6 +8,7 @@
     <link rel="icon" href="{% static 'img/logo-icono.png' %}" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     <style>
         /* ESTILOS GLOBALES */
@@ -172,32 +173,50 @@
                 {% load humanize %}
                 {% for prop in propiedades %}
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 hover-lift">
+                    <div class="card h-100 shadow-sm border-0 hover-lift position-relative">
+                        
                         <div class="position-relative overflow-hidden rounded-top">
                             {% if prop.imagen_principal %}
                                 <img src="{{ prop.imagen_principal.imagen.url }}" class="card-img-top" alt="{{ prop.titulo }}" style="height: 220px; object-fit: cover;">
                             {% else %}
                                 <img src="https://via.placeholder.com/400x300" class="card-img-top" style="height: 220px; object-fit: cover;">
                             {% endif %}
-                            <span class="position-absolute top-0 start-0 badge bg-dark opacity-75 m-3">{{ prop.get_tipo_display }}</span>
+
+                            <span class="position-absolute top-0 start-0 badge m-3 shadow-sm
+                                {% if prop.operacion == 'VENTA' %} bg-success {% else %} bg-warning text-dark {% endif %}"
+                                style="opacity: 0.9; font-weight: 600; letter-spacing: 0.5px;">
+                                {{ prop.get_operacion_display }}
+                            </span>
                         </div>
+
                         <div class="card-body">
-                            <h5 class="card-title fw-bold text-technical mb-1 text-truncate">{{ prop.titulo }}</h5>
-                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ prop.comuna }}</p>
+                            <div class="text-uppercase text-muted fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                {{ prop.get_tipo_display }}
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2" 
+                                style="font-size: 1.1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em; line-height: 1.4;">
+                                <a href="{% url 'detalle_propiedad' prop.slug %}" 
+                                onclick="event.preventDefault(); abrirModalPropiedad(this.href);" 
+                                class="text-decoration-none text-technical stretched-link">
+                                    {{ prop.titulo }}
+                                </a>
+                            </h5>
+
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ prop.ubicacion_visual }}</p>
                             
                             <div class="mt-2">
                                 {% if prop.precio_pesos_referencia %}
                                     <h5 class="fw-bold text-success mb-0">${{ prop.precio_pesos_referencia|intcomma }}</h5>
-                                    <small class="text-muted" style="font-size: 0.8rem;">{{ prop.precio_formateado }}</small>
+                                    <small class="text-muted" style="font-size: 0.8rem;">
+                                        {{ prop.precio_uf_visual }} UF
+                                    </small>
                                 {% else %}
                                     <h5 class="fw-bold text-success mb-0">{{ prop.precio_formateado }}</h5>
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="card-footer bg-white border-0 p-3">
-                            <a href="{% url 'detalle_propiedad' prop.slug %}" onclick="event.preventDefault(); abrirModalPropiedad(this.href);" class="btn btn-outline-primary w-100 rounded-pill fw-bold btn-sm">Ver Detalles</a>
                         </div>
-                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -478,7 +497,7 @@
                         </div>
                     </a>
                     <p class="text-white-50 small pe-lg-5">
-                        Gestión inmobiliaria con respaldo topográfico en Tomé y alrededores. Transformamos problemas complejos en soluciones claras desde 2013.
+                        Gestión inmobiliaria con respaldo topográfico en Tomé y alrededores. Transformamos problemas complejos en soluciones claras desde 2013
                     </p>
                 </div>
                 <div class="col-6 col-sm-4 col-lg-2 mb-3 mb-sm-0">
@@ -510,15 +529,15 @@
                     <ul class="list-unstyled small text-white-50">
                         <li class="mb-3 d-flex">
                             <i class="bi bi-geo-alt-fill text-success me-3 mt-1"></i>
-                            <span>Oficina Central, Tomé,<br>Región del Biobío, Chile.</span>
+                            <span>Jorge Montt, Dichato,<br>Comuna de Tomé</span>
                         </li>
                         <li class="mb-3 d-flex align-items-center">
                             <i class="bi bi-whatsapp text-success me-3 fs-5"></i>
-                            <a href="https://wa.me/56912345678" target="_blank" class="footer-link text-white">+56 9 1234 5678</a>
+                            <a href="https://wa.me/56912345678" target="_blank" class="footer-link text-white">+56 9 7660 7301</a>
                         </li>
                         <li class="d-flex align-items-center">
                             <i class="bi bi-envelope-fill text-success me-3"></i>
-                            <a href="mailto:contacto@terrastudio.cl" class="footer-link text-white">contacto@terrastudio.cl</a>
+                            <a href="mailto:contacto@terrastudio.cl" class="footer-link text-white">ruzbraulio@gmail.com</a>
                         </li>
                     </ul>
                 </div>
@@ -526,13 +545,29 @@
                     <h5 class="fw-bold mb-3">Síguenos</h5>
                     <div class="d-flex mb-4">
                         <a href="#" class="social-icon me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-icon me-2"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-icon me-2"><i class="bi bi-tiktok"></i></a>
                         <a href="#" class="social-icon me-2"><i class="bi bi-youtube"></i></a>
                     </div>
-                    <h6 class="fw-bold mb-2 small text-white-50 text-uppercase ls-1">Certificaciones</h6>
-                    <div class="bg-white p-2 rounded d-inline-block opacity-75">
-                        <img src="https://via.placeholder.com/100x50?text=SOCIO+CChC" alt="Certificación" height="40">
+
+                    <h6 class="fw-bold mb-3 mt-4 text-white">Respaldo Académico</h6>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="{% static 'img/logo-udec.png' %}" 
+                            alt="Universidad de Concepción" 
+                            title="Universidad de Concepción"
+                            style="height: 45px; width: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9;">
+                        
+                        <img src="{% static 'img/logo-uc.png' %}" 
+                            alt="Pontificia Universidad Católica" 
+                            title="Pontificia Universidad Católica"
+                            style="height: 40px; width: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9;">
+                        
+                        <img src="{% static 'img/logo-uchile.png' %}" 
+                            alt="Universidad de Chile" 
+                            title="Universidad de Chile"
+                            style="height: 45px; width: auto; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9;">
                     </div>
                 </div>
             </div>
@@ -711,6 +746,115 @@
         });
     }
 </script>
+<script>
+    // --- VARIABLES GLOBALES ---
+    let galleryImages = [];
+    let currentImageIndex = 0;
 
+    // 1. FUNCION: Ver más / Ver menos descripción
+    function toggleDescription() {
+        const shortDesc = document.getElementById('desc-short');
+        const fullDesc = document.getElementById('desc-full');
+        const btn = document.getElementById('btn-toggle-desc');
+        
+        if (shortDesc && fullDesc) {
+            if (shortDesc.classList.contains('d-none')) {
+                shortDesc.classList.remove('d-none');
+                fullDesc.classList.add('d-none');
+                btn.innerHTML = 'Ver más <i class="bi bi-chevron-down ms-1"></i>';
+            } else {
+                shortDesc.classList.add('d-none');
+                fullDesc.classList.remove('d-none');
+                btn.innerHTML = 'Ver menos <i class="bi bi-chevron-up ms-1"></i>';
+            }
+        }
+    }
+
+    // 2. FUNCION: Cambiar imagen principal desde miniaturas
+    function updateMainImage(src) {
+        const mainImg = document.getElementById('mainImage');
+        if (mainImg) mainImg.src = src;
+
+        // Actualizar bordes de miniaturas
+        document.querySelectorAll('.thumb-item').forEach(img => {
+            if (img.src === src) {
+                img.classList.remove('border-transparent', 'opacity-75');
+                img.classList.add('border-primary', 'border-2', 'opacity-100');
+            } else {
+                img.classList.add('border-transparent', 'opacity-75');
+                img.classList.remove('border-primary', 'border-2', 'opacity-100');
+            }
+        });
+    }
+
+    // 3. FUNCION: Abrir Lightbox (Pantalla Completa)
+    function openLightbox() {
+        // A. Leer las imágenes del input oculto que pusimos en el modal
+        const csvInput = document.getElementById('gallery-data-csv');
+        if (!csvInput) return; // Si no hay datos, no hacemos nada
+
+        // B. Convertir CSV a Array y limpiar duplicados
+        const rawList = csvInput.value.split(',');
+        galleryImages = [...new Set(rawList)].filter(url => url.trim() !== '');
+
+        // C. Detectar índice actual
+        const currentSrc = document.getElementById('mainImage').src;
+        // Buscamos coincidencias (usamos 'includes' por si hay dominios relativos/absolutos)
+        let index = galleryImages.findIndex(url => currentSrc.includes(url.trim()));
+        if (index === -1) index = 0;
+        currentImageIndex = index;
+
+        // D. Mostrar Lightbox
+        updateLightboxContent();
+        document.getElementById('lightbox-overlay').style.display = 'flex';
+        
+        // E. Generar miniaturas del lightbox
+        const thumbsContainer = document.querySelector('.lightbox-thumbs');
+        thumbsContainer.innerHTML = '';
+        galleryImages.forEach((src, idx) => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'lightbox-thumb-img ' + (idx === currentImageIndex ? 'active' : '');
+            img.onclick = () => { currentImageIndex = idx; updateLightboxContent(); };
+            thumbsContainer.appendChild(img);
+        });
+    }
+
+    function closeLightbox(e) {
+        if (!e || e.target.id === 'lightbox-overlay') {
+            document.getElementById('lightbox-overlay').style.display = 'none';
+        }
+    }
+
+    function changeLightboxImage(direction) {
+        currentImageIndex += direction;
+        if (currentImageIndex >= galleryImages.length) currentImageIndex = 0;
+        if (currentImageIndex < 0) currentImageIndex = galleryImages.length - 1;
+        updateLightboxContent();
+    }
+
+    function updateLightboxContent() {
+        if (galleryImages.length === 0) return;
+        const src = galleryImages[currentImageIndex];
+        const imgTag = document.getElementById('lightbox-img-tag');
+        if(imgTag) imgTag.src = src;
+        
+        // Highlight miniaturas
+        document.querySelectorAll('.lightbox-thumb-img').forEach((el, idx) => {
+            el.classList.toggle('active', idx === currentImageIndex);
+            if (idx === currentImageIndex) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+    }
+
+    // Navegación con Teclado
+    document.addEventListener('keydown', function(e) {
+        const overlay = document.getElementById('lightbox-overlay');
+        if (overlay && overlay.style.display === 'flex') {
+            if (e.key === 'ArrowLeft') changeLightboxImage(-1);
+            if (e.key === 'ArrowRight') changeLightboxImage(1);
+            if (e.key === 'Escape') closeLightbox(null);
+        }
+    });
+</script>
 </body>
 </html>
