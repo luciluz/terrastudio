@@ -49,17 +49,14 @@ def catalogo(request):
 # En views.py
 
 def detalle_propiedad(request, slug):
-
     propiedad = get_object_or_404(Propiedad, slug=slug)
     
-    # CASO A: SI ES AJAX (Click desde dentro de la web)
-    # Devolvemos solo el HTML interno del modal (rápido y ligero)
+    # Si es petición AJAX (click desde el modal)
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'propiedades/detalle_content.html', {'propiedad': propiedad})
     
-    # CASO B: SI ES LINK DIRECTO (WhatsApp, Facebook, copiar link)
-    # Cargamos el catálogo completo de fondo para que no se vea vacío
-    # Copiamos la misma consulta que usas en la vista 'catalogo'
+    # Si es link directo (deep link desde WhatsApp, etc.)
+    # Renderizamos el catálogo con instrucción de abrir el modal automáticamente
     todas_las_propiedades = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
@@ -68,12 +65,11 @@ def detalle_propiedad(request, slug):
     ).order_by('-fecha_ingreso')
     
     context = {
-        'propiedades': todas_las_propiedades, # El fondo (catálogo)
-        'modal_open_slug': slug,            # LA SEÑAL para que JS abra el modal solo
-        'is_catalog_page': True             # Para que el navbar sepa dónde estamos
+        'propiedades': todas_las_propiedades,
+        'modal_open_slug': slug,  # Esta es la señal para JS
+        'is_catalog_page': True
     }
     
-    # Renderizamos el catálogo, pero con la instrucción de abrir el modal
     return render(request, 'propiedades/catalogo.html', context)
 
 def servicios(request):
