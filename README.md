@@ -38,7 +38,6 @@ El objetivo del proyecto es ofrecer una experiencia de usuario fluida, permitien
 * **Backend:** Python, Django Framework.
 * **Frontend:** HTML5, CSS3, JavaScript (ES6+), Bootstrap 5.3.
 * **Base de Datos:** SQLite.
-* **Librerías Clave:** `django-humanize` para formato de precios y fechas.
 
 ## Instalación y Uso Local
 
