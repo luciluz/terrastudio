@@ -1,0 +1,19 @@
+# --- Django y Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+venv/
+env/
+.env
+
+db.sqlite3
+
+# --- Archivos Multimedia ---
+# Ignora las fotos que subes probando, pero mantiene la carpeta
+media/
+
+# --- Archivos de Sistema y Editores ---
+.DS_Store
+.vscode/
+.idea/
