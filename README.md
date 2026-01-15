@@ -2,7 +2,7 @@
 
 > Plataforma web integral para la gestión inmobiliaria y servicios topográficos en Tomé, Chile.
 
-![License](https://img.shields.io/github/license/user/repo?style=flat-square&color=blue)
+![License](https://img.shields.io/badge/License-GNU%20GPLv3-blue?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-yellow?style=flat-square&logo=python)
 ![Django](https://img.shields.io/badge/Django-5.0-092E20?style=flat-square&logo=django)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat-square&logo=bootstrap)
