@@ -16,8 +16,19 @@ El objetivo del proyecto es ofrecer una experiencia de usuario fluida, permitien
 ## Características Principales
 
 * **Catálogo de Propiedades Dinámico:** Sistema de visualización de terrenos y parcelas con fichas técnicas detalladas (factibilidad de luz/agua, topografía, rol).
+
+<p align="center">
+  <img src="docs/gifs/visor-prop-demo.gif" width="600" alt="Demo propiedades">
+</p>
+
 * **Galería Lightbox Personalizada:** Visor de imágenes inmersivo desarrollado con JavaScript puro, con soporte para gestos táctiles (Swipe) en móviles y navegación por teclado en escritorio.
 * **Wizard de Contacto Interactivo:** Un formulario paso a paso inteligente que segmenta al cliente según su intención (Comprar, Vender, Topografía, Legal) antes de enviar la solicitud.
+
+<p align="center">
+  <img src="docs/gifs/panel-int-demo.gif" width="600" alt="Demo del Wizard">
+</p>
+
+
 * **Automatización de UX:** Deep-linking que permite activar el asistente de contacto automáticamente desde fichas de propiedades o enlaces externos.
 * **Diseño Responsive & Mobile-First:** Interfaz adaptada meticulosamente para móviles, ocultando elementos innecesarios y optimizando la navegación táctil.
 * **whatsapp-widget:** Integración flotante para contacto directo vía WhatsApp.
