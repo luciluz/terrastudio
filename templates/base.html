@@ -467,7 +467,8 @@
             document.querySelectorAll('#step-3 .btn-channel').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            document.getElementById('summary-text').innerText = subServicioSeleccionado;
+            // ELIMINAMOS la línea que causaba el error:
+            // document.getElementById('summary-text').innerText = subServicioSeleccionado;
 
             const labelEmail = document.getElementById('label-email');
             const inputEmail = document.getElementById('input-email');
