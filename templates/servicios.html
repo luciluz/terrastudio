@@ -6,12 +6,12 @@
 <div class="position-relative text-white py-5 overflow-hidden" style="min-height: 400px; display: flex; align-items: center;">
     
     <div class="position-absolute top-0 start-0 w-100 h-100" 
-         style="background-image: url('https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=1920'); 
+         style="background-image: url('{% static 'img/servicios/servicios-bg.png' %}'); 
                 background-size: cover; background-position: center;">
     </div>
     
     <div class="position-absolute top-0 start-0 w-100 h-100" 
-         style="background: linear-gradient(to bottom, rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.95));">
+         style="background: linear-gradient(to bottom, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5));">
     </div>
     
     <div class="container position-relative z-1 text-center">
@@ -47,7 +47,11 @@
     <div id="inmobiliaria" class="row align-items-center py-5 scroll-margin">
         <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
             <div class="position-relative">
-                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Corretaje">
+                <img src="{% static 'img/servicios/operaciones-inmobiliarias.jpg' %}" 
+                     class="img-fluid rounded-4 shadow-lg" 
+                     alt="Corretaje"
+                     style="width: 100%; height: 450px; object-fit: cover;">
+                
                 <div class="position-absolute bottom-0 start-0 bg-success text-white p-3 rounded-end-4 mb-4 shadow">
                     <i class="bi bi-house-check fs-2"></i>
                 </div>
@@ -89,7 +93,11 @@
     <div id="topografia" class="row align-items-center py-5 scroll-margin">
         <div class="col-lg-6 mb-4 mb-lg-0">
             <div class="position-relative">
-                <img src="https://umilesgroup.com/wp-content/uploads/2023/02/diseno-sin-titulo-57.jpg.webp" class="img-fluid rounded-4 shadow-lg" alt="Topografía">
+                <img src="{% static 'img/servicios/dron.png' %}" 
+                     class="img-fluid rounded-4 shadow-lg" 
+                     alt="Topografía" 
+                     style="width: 100%; height: 450px; object-fit: cover;">
+                     
                 <div class="position-absolute bottom-0 end-0 bg-primary text-white p-3 rounded-start-4 mb-4 shadow" style="background-color: #2980b9 !important;">
                     <i class="bi bi-geo-alt fs-2"></i>
                 </div>
@@ -131,7 +139,11 @@
     <div id="legal" class="row align-items-center py-5 scroll-margin">
         <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
             <div class="position-relative">
-                <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Legal">
+                <img src="{% static 'img/servicios/legal.jpg' %}" 
+                     class="img-fluid rounded-4 shadow-lg" 
+                     alt="Legal"
+                     style="width: 100%; height: 450px; object-fit: cover;">
+                
                 <div class="position-absolute bottom-0 start-0 bg-warning text-dark p-3 rounded-end-4 mb-4 shadow">
                     <i class="bi bi-file-earmark-check fs-2"></i>
                 </div>
@@ -163,7 +175,11 @@
     <div id="tasaciones" class="row align-items-center py-5 scroll-margin">
         <div class="col-lg-6 mb-4 mb-lg-0">
             <div class="position-relative">
-                <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded-4 shadow-lg" alt="Tasaciones">
+                <img src="{% static 'img/servicios/tasaciones.jpg' %}" 
+                     class="img-fluid rounded-4 shadow-lg" 
+                     alt="Tasaciones"
+                     style="width: 100%; height: 450px; object-fit: cover;">
+                
                 <div class="position-absolute bottom-0 end-0 bg-info text-white p-3 rounded-start-4 mb-4 shadow" style="background-color: #1abc9c !important;">
                     <i class="bi bi-clipboard-data fs-2"></i>
                 </div>
@@ -191,14 +207,14 @@
 
 <script>
     function activarWizard(categoria) {
-        // 1. Hacemos scroll suave hasta la sección de contacto (que está en el footer/base)
+        // 1. Hacemos scroll suave hasta la sección de contacto
         const contactoSection = document.getElementById('contacto-interactivo');
-        contactoSection.scrollIntoView({ behavior: 'smooth' });
+        if (contactoSection) {
+            contactoSection.scrollIntoView({ behavior: 'smooth' });
+        }
 
         // 2. Buscamos el botón correspondiente en el Wizard y le hacemos click
-        // Esperamos 800ms para que termine el scroll
         setTimeout(() => {
-            // Buscamos el botón que tenga el onclick con la categoría correcta
             const botones = document.querySelectorAll(`#step-1 button`);
             botones.forEach(btn => {
                 if (btn.getAttribute('onclick').includes(`'${categoria}'`)) {
