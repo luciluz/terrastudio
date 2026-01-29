@@ -228,6 +228,18 @@
 
     <section class="py-5 bg-light" id="contacto-interactivo">
         <div class="container">
+            {% if messages %}
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
             <div class="text-center mb-5">
                 <h3 class="fw-bold text-technical">¿Tienes un proyecto en mente?</h3>
                 <p class="text-muted mx-auto" style="max-width: 700px;">
@@ -302,28 +314,34 @@
                             <div class="col-md-8">
                                 <div class="card bg-light border-0 p-4 rounded-4 text-center">
                                     <h5 class="fw-bold text-technical mb-3">¡Perfecto!</h5>
-                                    <p class="small text-muted mb-4">Déjanos tus datos para que charlemos
+                                    <p class="small text-muted mb-4">Déjanos tus datos para coordinar.</p>
                                     
-                                    <form action="#" method="POST">
+                                    <form action="{% url 'enviar_contacto' %}" method="POST" id="contactForm">
+                                        {% csrf_token %}
+                                        
+                                        <input type="hidden" name="categoria" id="input-categoria">
+                                        <input type="hidden" name="subcategoria" id="input-subcategoria">
+                                        <input type="hidden" name="canal" id="input-canal">
+
                                         <div class="row g-3 text-start">
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold text-technical">Nombre *</label>
-                                                <input type="text" class="form-control rounded-3" required>
+                                                <input type="text" name="nombre" class="form-control rounded-3" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold text-technical">Teléfono / WhatsApp *</label>
-                                                <input type="tel" class="form-control rounded-3" required>
+                                                <input type="tel" name="telefono" class="form-control rounded-3" required>
                                             </div>
                                             <div class="col-12">
-                                                <label class="form-label small fw-bold text-technical" id="label-email">Correo Electrónico (Opcional)</label>
-                                                <input type="email" class="form-control rounded-3" id="input-email">
+                                                <label class="form-label small fw-bold text-technical" id="label-email">Correo Electrónico</label>
+                                                <input type="email" name="email" id="input-email" class="form-control rounded-3">
                                             </div>
                                             <div class="col-12">
-                                                <label class="form-label small fw-bold text-technical">Detalles adicionales (Opcional)</label>
-                                                <textarea class="form-control rounded-3" rows="3"></textarea>
+                                                <label class="form-label small fw-bold text-technical">Detalles adicionales</label>
+                                                <textarea name="mensaje" class="form-control rounded-3" rows="3"></textarea>
                                             </div>
                                             <div class="col-12 mt-4">
-                                                <button type="button" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm hover-scale">
+                                                <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm hover-scale">
                                                     Enviar Solicitud <i class="bi bi-send ms-2"></i>
                                                 </button>
                                             </div>
@@ -424,6 +442,7 @@
         let subServicioSeleccionado = '';
 
         function selectCategory(btn, categoria) {
+            document.getElementById('input-categoria').value = categoria;
             document.querySelectorAll('#step-1 .btn-option').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             categoriaSeleccionada = categoria;
@@ -454,6 +473,7 @@
         }
 
         function selectSubService(btn, nombreServicio) {
+            document.getElementById('input-subcategoria').value = nombreServicio;
             document.querySelectorAll('#step-2 button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             subServicioSeleccionado = nombreServicio;
@@ -464,6 +484,7 @@
         }
 
         function selectChannel(btn, canal) {
+            document.getElementById('input-canal').value = canal;
             document.querySelectorAll('#step-3 .btn-channel').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 

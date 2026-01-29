@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from propiedades.views import inicio, detalle_propiedad, nosotros, catalogo, servicios
+from propiedades.views import inicio, detalle_propiedad, nosotros, catalogo, servicios, enviar_contacto
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -12,6 +12,8 @@ urlpatterns = [
     path('nosotros/', nosotros, name='nosotros'),
     
     path('propiedad/<slug:slug>/', detalle_propiedad, name='detalle_propiedad'),
+
+    path('enviar-contacto/', enviar_contacto, name='enviar_contacto'),
     
     path('catalogo/', catalogo, name='catalogo'),
     path('servicios/', servicios, name='servicios'),

@@ -1,13 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 from .models import Propiedad
 
 # --- VISTAS ---
 
 def inicio(request):
-    # Filtramos:
-    # 1. Estado: Disponible o Reservado
-    # 2. Checkbox: Que esté marcada como 'esta_publicada'
-    # 3. Excluir: Que NO sea un pack interno (TERRA_WEB)
     propiedades_destacadas = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
@@ -31,8 +30,6 @@ def nosotros(request):
     return render(request, 'nosotros.html', {'propiedades': propiedades_destacadas})
 
 def catalogo(request):
-    # 1. BASE: Tus filtros de negocio originales
-    # Definimos el universo de propiedades válidas primero
     qs_base = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
@@ -40,31 +37,24 @@ def catalogo(request):
         plataformas_publicadas__contains='TERRA_WEB'
     )
 
-    # 2. FILTRO: Obtener lista de sectores (solo de las propiedades visibles)
-    # Usamos qs_base para no mostrar sectores de propiedades ocultas/vendidas
     sectores = qs_base.exclude(sector="").values_list('sector', flat=True).distinct().order_by('sector')
 
-    # 3. LÓGICA: Aplicar filtro de Sector si el usuario lo seleccionó
     sector_seleccionado = request.GET.get('sector')
     if sector_seleccionado:
         qs_base = qs_base.filter(sector=sector_seleccionado)
 
-    # 4. ORDENAMIENTO: Determinar el orden final
     orden = request.GET.get('orden')
     
     if orden == 'menor_mayor':
-        # Asegúrate que el campo en tu modelo sea 'precio_uf' o cambia este nombre
         propiedades = qs_base.order_by('precio_uf') 
     elif orden == 'mayor_menor':
         propiedades = qs_base.order_by('-precio_uf')
     else:
-        # Tu orden por defecto original (si no eligen nada)
         propiedades = qs_base.order_by('-fecha_ingreso')
 
     context = {
         'propiedades': propiedades,
         'is_catalog_page': True,
-        # Agregamos las variables nuevas para el template
         'sectores': sectores,
         'filtro_sector': sector_seleccionado,
         'filtro_orden': orden,
@@ -72,17 +62,12 @@ def catalogo(request):
 
     return render(request, 'propiedades/catalogo.html', context)
 
-# En views.py
-
 def detalle_propiedad(request, slug):
     propiedad = get_object_or_404(Propiedad, slug=slug)
     
-    # Si es petición AJAX (click desde el modal)
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'propiedades/detalle_content.html', {'propiedad': propiedad})
     
-    # Si es link directo (deep link desde WhatsApp, etc.)
-    # Renderizamos el catálogo con instrucción de abrir el modal automáticamente
     todas_las_propiedades = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
@@ -92,7 +77,7 @@ def detalle_propiedad(request, slug):
     
     context = {
         'propiedades': todas_las_propiedades,
-        'modal_open_slug': slug,  # Esta es la señal para JS
+        'modal_open_slug': slug,
         'is_catalog_page': True
     }
     
@@ -100,3 +85,63 @@ def detalle_propiedad(request, slug):
 
 def servicios(request):
     return render(request, 'servicios.html')
+
+# --- NUEVA VISTA PARA EL FORMULARIO DE CONTACTO ---
+
+def enviar_contacto(request):
+    if request.method == 'POST':
+        # 1. Obtener datos del formulario
+        categoria = request.POST.get('categoria', 'General')
+        canal = request.POST.get('canal', 'Indefinido')
+        nombre = request.POST.get('nombre')
+        telefono = request.POST.get('telefono')
+        email_cliente = request.POST.get('email', 'No proporcionado')
+        mensaje_cliente = request.POST.get('mensaje', '')
+
+        # 2. Asunto y Cuerpo del correo para ti (Administrador)
+        asunto = f"Nuevo contacto desde web TerraStudio: {nombre} - {categoria}"
+        
+        cuerpo_mensaje = f"""
+        Has recibido una nueva solicitud de contacto desde la web TerraStudio.cl
+
+        DATOS DEL CLIENTE
+        =================
+        Nombre:   {nombre}
+        Teléfono: {telefono}
+        Email:    {email_cliente}
+        
+        INTERÉS
+        =======
+        Área:  {categoria}
+        Canal: {canal}
+        
+        MENSAJE ADICIONAL
+        =================
+        {mensaje_cliente}
+        """
+
+        # 3. Intentar enviar el correo
+        try:
+            send_mail(
+                asunto,
+                cuerpo_mensaje,
+                settings.EMAIL_HOST_USER,   # Desde (tu correo configurado en settings)
+                ['ruzbraulio@gmail.com'],   # Hacia (tu correo personal)
+                fail_silently=False,
+            )
+            # Mensaje de éxito para el usuario
+            messages.success(request, '¡Solicitud recibida! Te contactaremos a la brevedad.')
+        except Exception as e:
+            print(f"Error enviando correo: {e}")
+            messages.error(request, 'Hubo un error al enviar tu solicitud. Por favor contáctanos por WhatsApp.')
+
+        url_anterior = request.META.get('HTTP_REFERER')
+        
+        if url_anterior:
+            if '#' in url_anterior:
+                url_anterior = url_anterior.split('#')[0]
+            return redirect(url_anterior + '#contacto-interactivo')
+        
+        return redirect('inicio') 
+    
+    return redirect('inicio')
