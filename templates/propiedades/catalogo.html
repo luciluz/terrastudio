@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load humanize %}
 
 {% block content %}
@@ -23,6 +24,44 @@
 </div>
 
 <div class="container my-5 pt-3"> 
+
+    <form method="get" class="row g-2 align-items-center justify-content-end mb-4 pb-2 border-bottom">
+        
+        <div class="col-auto d-none d-md-block text-muted me-2">
+            <small class="fw-bold text-uppercase"><i class="bi bi-sliders"></i> Filtros:</small>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <select name="sector" class="form-select form-select-sm shadow-sm" onchange="this.form.submit()">
+                <option value="">Todos los sectores</option>
+                {% for sector in sectores %}
+                    <option value="{{ sector }}" {% if filtro_sector == sector %}selected{% endif %}>
+                        {{ sector }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <select name="orden" class="form-select form-select-sm shadow-sm" onchange="this.form.submit()">
+                <option value="">Más recientes</option>
+                <option value="menor_mayor" {% if filtro_orden == 'menor_mayor' %}selected{% endif %}>
+                    Precio: Menor a Mayor
+                </option>
+                <option value="mayor_menor" {% if filtro_orden == 'mayor_menor' %}selected{% endif %}>
+                    Precio: Mayor a Menor
+                </option>
+            </select>
+        </div>
+        
+        {% if filtro_sector or filtro_orden %}
+        <div class="col-auto">
+            <a href="{% url 'catalogo' %}" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                <i class="bi bi-x-lg"></i> Limpiar filtros
+            </a>
+        </div>
+        {% endif %}
+    </form>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for prop in propiedades %}
             <div class="col">

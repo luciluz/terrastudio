@@ -31,17 +31,43 @@ def nosotros(request):
     return render(request, 'nosotros.html', {'propiedades': propiedades_destacadas})
 
 def catalogo(request):
-    # Catálogo completo visible
-    todas_las_propiedades = Propiedad.objects.filter(
+    # 1. BASE: Tus filtros de negocio originales
+    # Definimos el universo de propiedades válidas primero
+    qs_base = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
         esta_publicada=True
     ).exclude(
         plataformas_publicadas__contains='TERRA_WEB'
-    ).order_by('-fecha_ingreso')
+    )
+
+    # 2. FILTRO: Obtener lista de sectores (solo de las propiedades visibles)
+    # Usamos qs_base para no mostrar sectores de propiedades ocultas/vendidas
+    sectores = qs_base.exclude(sector="").values_list('sector', flat=True).distinct().order_by('sector')
+
+    # 3. LÓGICA: Aplicar filtro de Sector si el usuario lo seleccionó
+    sector_seleccionado = request.GET.get('sector')
+    if sector_seleccionado:
+        qs_base = qs_base.filter(sector=sector_seleccionado)
+
+    # 4. ORDENAMIENTO: Determinar el orden final
+    orden = request.GET.get('orden')
     
+    if orden == 'menor_mayor':
+        # Asegúrate que el campo en tu modelo sea 'precio_uf' o cambia este nombre
+        propiedades = qs_base.order_by('precio_uf') 
+    elif orden == 'mayor_menor':
+        propiedades = qs_base.order_by('-precio_uf')
+    else:
+        # Tu orden por defecto original (si no eligen nada)
+        propiedades = qs_base.order_by('-fecha_ingreso')
+
     context = {
-        'propiedades': todas_las_propiedades,
-        'is_catalog_page': True 
+        'propiedades': propiedades,
+        'is_catalog_page': True,
+        # Agregamos las variables nuevas para el template
+        'sectores': sectores,
+        'filtro_sector': sector_seleccionado,
+        'filtro_orden': orden,
     }
 
     return render(request, 'propiedades/catalogo.html', context)
