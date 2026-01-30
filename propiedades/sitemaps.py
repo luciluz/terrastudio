@@ -12,9 +12,7 @@ class PropiedadSitemap(Sitemap):
         return Propiedad.objects.all() 
 
     def lastmod(self, obj):
-        # Ajusta esto al campo de fecha de tu modelo (ej: fecha_publicacion, created_at, etc)
-        # Si no tienes fecha, puedes borrar este método 'lastmod' entero.
-        return obj.fecha_publicacion 
+        return obj.fecha_ingreso
 
 class StaticViewSitemap(Sitemap):
     priority = 0.5
@@ -23,7 +21,7 @@ class StaticViewSitemap(Sitemap):
 
     def items(self):
         # Aquí pon los 'name' de tus urls estáticas (revisa tu urls.py)
-        return ['inicio', 'nosotros', 'contacto', 'servicios']
+        return ['inicio', 'nosotros', 'catalogo', 'servicios']
 
     def location(self, item):
         return reverse(item)

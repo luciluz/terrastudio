@@ -9,6 +9,7 @@ import os
 import requests
 from decimal import Decimal
 import datetime
+from django.urls import reverse
 
 # --- OPCIONES ---
 
@@ -193,6 +194,10 @@ class Propiedad(models.Model):
             self.precio_uf = (self.precio_lista / valor_uf).quantize(Decimal('0.01'))
 
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        # 'detalle_propiedad' debe coincidir con el name=... que pusiste en urls.py
+        return reverse('detalle_propiedad', kwargs={'slug': self.slug})
 
     @property
     def precio_formateado(self):
