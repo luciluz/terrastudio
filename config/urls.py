@@ -28,7 +28,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path(settings.ADMIN_URL, admin.site.urls),
+    path(ADMIN_URL, admin.site.urls),
     
     path('', inicio, name='inicio'),
     path('nosotros/', nosotros, name='nosotros'),
