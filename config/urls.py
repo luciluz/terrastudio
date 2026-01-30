@@ -4,6 +4,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from propiedades.views import inicio, detalle_propiedad, nosotros, catalogo, servicios, enviar_contacto
+from django.contrib.sitemaps.views import sitemap
+from propiedades.sitemaps import PropiedadSitemap, StaticViewSitemap
+
+sitemaps = {
+    'propiedades': PropiedadSitemap,
+    'estaticas': StaticViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,6 +24,8 @@ urlpatterns = [
     
     path('catalogo/', catalogo, name='catalogo'),
     path('servicios/', servicios, name='servicios'),
+
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 if settings.DEBUG:
