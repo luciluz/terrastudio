@@ -4,8 +4,6 @@ from django.conf import settings
 from django.contrib import messages
 from .models import Propiedad
 
-# --- VISTAS ---
-
 def inicio(request):
     propiedades_destacadas = Propiedad.objects.filter(
         estado__in=['DISPONIBLE', 'RESERVADO'],
@@ -86,11 +84,8 @@ def detalle_propiedad(request, slug):
 def servicios(request):
     return render(request, 'servicios.html')
 
-# --- NUEVA VISTA PARA EL FORMULARIO DE CONTACTO ---
-
 def enviar_contacto(request):
     if request.method == 'POST':
-        # 1. Obtener datos del formulario
         categoria = request.POST.get('categoria', 'General')
         canal = request.POST.get('canal', 'Indefinido')
         nombre = request.POST.get('nombre')
@@ -98,7 +93,6 @@ def enviar_contacto(request):
         email_cliente = request.POST.get('email', 'No proporcionado')
         mensaje_cliente = request.POST.get('mensaje', '')
 
-        # 2. Asunto y Cuerpo del correo para ti (Administrador)
         asunto = f"Nuevo contacto desde web TerraStudio: {nombre} - {categoria}"
         
         cuerpo_mensaje = f"""
@@ -120,16 +114,14 @@ def enviar_contacto(request):
         {mensaje_cliente}
         """
 
-        # 3. Intentar enviar el correo
         try:
             send_mail(
                 asunto,
                 cuerpo_mensaje,
-                settings.EMAIL_HOST_USER,   # Desde (tu correo configurado en settings)
-                ['ruzbraulio@gmail.com'],   # Hacia (tu correo personal)
+                settings.EMAIL_HOST_USER,
+                ['ruzbraulio@gmail.com'],
                 fail_silently=False,
             )
-            # Mensaje de éxito para el usuario
             messages.success(request, '¡Solicitud recibida! Te contactaremos a la brevedad.')
         except Exception as e:
             print(f"Error enviando correo: {e}")

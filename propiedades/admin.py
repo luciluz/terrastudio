@@ -12,7 +12,7 @@ class ImagenPropiedadInline(admin.TabularInline):
 
 @admin.register(Propiedad)
 class PropiedadAdmin(admin.ModelAdmin):
-    # Inyectamos el JS para cálculo en vivo
+
     class Media:
         js = (
             'propiedades/js/admin_calculo.js',
@@ -27,7 +27,7 @@ class PropiedadAdmin(admin.ModelAdmin):
     list_per_page = 30
     inlines = [ImagenPropiedadInline]
     
-    # Readonly para los cálculos del servidor
+
     readonly_fields = ('precio_uf', 'precio_pesos_referencia', 'slug', 'creado', 'actualizado')
 
     fieldsets = (
@@ -44,7 +44,7 @@ class PropiedadAdmin(admin.ModelAdmin):
             'fields': (
                 ('direccion', 'comuna'),
                 ('sector', 'referencia_locacion'),
-                'coordenadas_gps', # Texto libre
+                'coordenadas_gps',
                 'link_google_earth'
             )
         }),
@@ -52,7 +52,7 @@ class PropiedadAdmin(admin.ModelAdmin):
             'fields': (
                 'operacion',
                 ('moneda', 'precio_lista'),
-                ('precio_uf', 'precio_pesos_referencia'), # Aquí actúa el JS y el Readonly
+                ('precio_uf', 'precio_pesos_referencia'),
             )
         }),
         ('4. Técnico y Servicios', {
@@ -68,7 +68,6 @@ class PropiedadAdmin(admin.ModelAdmin):
                 'esta_publicada',         
                 'plataformas_publicadas', 
                 
-                # --- NUEVO: Los campos de Links (El JS los ocultará si no están marcados) ---
                 'url_facebook', 'url_meta_ads', 'url_instagram', 
                 'url_portalinmobiliario', 'url_yapo', 'url_toctoc', 'url_terrastudio','url_otra',
                 
@@ -85,19 +84,11 @@ class PropiedadAdmin(admin.ModelAdmin):
     
 @admin.register(ImagenPropiedad)
 class ImagenPropiedadAdmin(admin.ModelAdmin):
-    # Columnas que se ven en la lista
+    
     list_display = ('preview_miniatura', 'propiedad', 'es_principal', 'orden', 'subido_en')
-    
-    # Filtros laterales
     list_filter = ('es_principal', 'propiedad__tipo', 'subido_en')
-    
-    # Buscador
     search_fields = ('propiedad__titulo', 'propiedad__id_ficha', 'titulo')
-    
-    # Cosas que puedes editar rápido sin entrar a la ficha
     list_editable = ('orden', 'es_principal')
-    
-    # Orden por defecto
     ordering = ('propiedad', 'orden')
     
     @admin.display(description="Foto")

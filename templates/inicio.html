@@ -168,52 +168,42 @@
 </style>
 
 <script>
-    // LÓGICA DE CONTADOR ANIMADO
     document.addEventListener("DOMContentLoaded", () => {
         const counters = document.querySelectorAll('.counter-value');
-        const speed = 200; // Mientras más alto, más lento
+        const speed = 200;
 
-        // Función que anima un contador específico
         const animateCounter = (counter) => {
             const updateCount = () => {
-                const target = +counter.getAttribute('data-target'); // El número final
-                const count = +counter.innerText; // El número actual
-                
-                // Calculamos cuánto sumar en cada paso para que todos terminen al mismo tiempo
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
                 const inc = target / speed;
 
                 if (count < target) {
-                    // Si es decimal (ej: 12.5), redondeamos hacia arriba
                     counter.innerText = Math.ceil(count + inc);
-                    setTimeout(updateCount, 20); // Velocidad de refresco (ms)
+                    setTimeout(updateCount, 20);
                 } else {
-                    counter.innerText = target; // Asegurar que termine en el número exacto
+                    counter.innerText = target;
                 }
             };
             updateCount();
         };
 
-        // OBSERVADOR: Solo inicia la animación cuando el usuario ve la sección
         const observerOptions = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.5 // Se activa cuando el 50% de la sección es visible
+            threshold: 0.5
         };
 
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Encontramos los contadores DENTRO de la sección visible
                     const sectionCounters = entry.target.querySelectorAll('.counter-value');
                     sectionCounters.forEach(counter => animateCounter(counter));
-                    
-                    // Dejamos de observar para que no se repita al subir y bajar
                     observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        // Empezar a observar la sección de estadísticas
         const statsSection = document.getElementById('stats-section');
         if (statsSection) {
             observer.observe(statsSection);
@@ -234,33 +224,22 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // 1. Leer si venimos mandados desde el modal
         const params = new URLSearchParams(window.location.search);
         const action = params.get('preselect');
 
         if (action === 'comprar') {
-            // Esperamos un poquito para asegurar que el HTML cargó
             setTimeout(() => {
                 console.log("Automatizando Wizard...");
-
-                // PASO 1: Clic en 'Operaciones Inmobiliarias'
-                // Buscamos el botón por su función onclick, es lo más seguro
                 const btnInmo = document.querySelector("button[onclick*='inmobiliaria']");
                 
                 if (btnInmo) {
-                    btnInmo.click(); // Esto despliega el paso 2
-
-                    // PASO 2: Esperar a que aparezcan las opciones y elegir 'Comprar'
+                    btnInmo.click();
                     setTimeout(() => {
                         const step2 = document.getElementById('step-2');
                         const buttons = step2.querySelectorAll('button');
-                        
-                        // Buscamos el botón que tenga la palabra "Comprar"
                         for (let btn of buttons) {
                             if (btn.innerText.toLowerCase().includes('comprar')) {
-                                btn.click(); // Esto despliega el formulario final
-                                
-                                // Hacemos scroll suave hacia el formulario final
+                                btn.click();                                
                                 document.getElementById('step-4').scrollIntoView({
                                     behavior: 'smooth',
                                     block: 'center'
@@ -268,7 +247,7 @@
                                 break;
                             }
                         }
-                    }, 400); // 400ms de espera para la animación
+                    }, 400);
                 }
             }, 300);
         }

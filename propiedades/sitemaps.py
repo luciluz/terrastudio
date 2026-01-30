@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import Propiedad # Asegúrate de importar tus modelos
+from .models import Propiedad
 
 class PropiedadSitemap(Sitemap):
     changefreq = "weekly"
@@ -8,7 +8,6 @@ class PropiedadSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        # Retorna solo las propiedades activas/publicadas
         return Propiedad.objects.all() 
 
     def lastmod(self, obj):
@@ -20,7 +19,6 @@ class StaticViewSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        # Aquí pon los 'name' de tus urls estáticas (revisa tu urls.py)
         return ['inicio', 'nosotros', 'catalogo', 'servicios']
 
     def location(self, item):

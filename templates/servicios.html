@@ -206,20 +206,15 @@
 
 <script>
     function activarWizard(categoria) {
-        // 1. Hacemos scroll suave hasta la sección de contacto
         const contactoSection = document.getElementById('contacto-interactivo');
         if (contactoSection) {
             contactoSection.scrollIntoView({ behavior: 'smooth' });
         }
-
-        // 2. Buscamos el botón correspondiente en el Wizard y le hacemos click
         setTimeout(() => {
             const botones = document.querySelectorAll(`#step-1 button`);
             botones.forEach(btn => {
                 if (btn.getAttribute('onclick').includes(`'${categoria}'`)) {
-                    btn.click(); // ¡Click automático!
-                    
-                    // Efecto visual para destacar que se seleccionó
+                    btn.click();
                     btn.classList.add('shadow-lg');
                     setTimeout(() => btn.classList.remove('shadow-lg'), 500);
                 }

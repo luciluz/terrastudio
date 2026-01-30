@@ -414,7 +414,6 @@
     {% endcomment %}
 
     <script>
-        // DATOS DE SUB-SERVICIOS
         const subOpciones = {
             'inmobiliaria': [
                 {icon: 'bi-house-check', text: 'Me interesa Comprar'},
@@ -487,9 +486,6 @@
             document.getElementById('input-canal').value = canal;
             document.querySelectorAll('#step-3 .btn-channel').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // ELIMINAMOS la línea que causaba el error:
-            // document.getElementById('summary-text').innerText = subServicioSeleccionado;
 
             const labelEmail = document.getElementById('label-email');
             const inputEmail = document.getElementById('input-email');
@@ -709,14 +705,12 @@
     <div class="position-relative d-flex justify-content-center align-items-center" 
          style="flex: 1; width: 100%; padding: 80px 10px 80px 10px;">
         
-        <!-- Zona táctil izquierda -->
         <div onclick="event.stopPropagation(); changeLightboxImage(-1);" 
              style="position: absolute; left: 0; top: 80px; bottom: 80px; width: 35%; z-index: 3; cursor: pointer;"></div>
         
         <img id="lightbox-img-tag" src="" 
              style="max-width: 100%; max-height: 100%; object-fit: contain; position: relative; z-index: 2;">
         
-        <!-- Zona táctil derecha -->
         <div onclick="event.stopPropagation(); changeLightboxImage(1);" 
              style="position: absolute; right: 0; top: 80px; bottom: 80px; width: 35%; z-index: 3; cursor: pointer;"></div>
         
@@ -728,15 +722,12 @@
 
 
 <script>
-    // --- VARIABLES GLOBALES ---
     let galleryImages = [];
     let currentImageIndex = 0;
     
-    // Variables Swipe
     let touchStartX = 0;
     let touchEndX = 0;
 
-    // --- LÓGICA NAVBAR ---
     document.addEventListener('DOMContentLoaded', function() {
         var navMain = document.getElementById('navbarNav');
         if(navMain) {
@@ -752,7 +743,6 @@
         }
     });
 
-    // --- FUNCIONES MODAL ---
     const modalPropiedad = new bootstrap.Modal(document.getElementById('modalPropiedad'));
 
     function abrirModalPropiedad(url) {
@@ -769,7 +759,6 @@
         .catch(err => console.error('Error cargando propiedad:', err));
     }
 
-    // --- FUNCIONES VISUALES ---
     function toggleDescription() {
         const shortDesc = document.getElementById('desc-short');
         const fullDesc = document.getElementById('desc-full');
@@ -803,8 +792,6 @@
         });
     }
 
-    // --- FUNCIONES LIGHTBOX ---
-
     function openLightbox() {
         const csvInput = document.getElementById('gallery-data-csv');
         if (!csvInput) return; 
@@ -821,11 +808,9 @@
         const overlay = document.getElementById('lightbox-overlay');
         overlay.style.display = 'flex';
         
-        // AGREGAR TOUCH LISTENERS AQUÍ (cuando ya existe el elemento)
         overlay.addEventListener('touchstart', handleTouchStart, {passive: true});
         overlay.addEventListener('touchend', handleTouchEnd, {passive: true});
         
-        // Generar miniaturas lightbox
         const thumbsContainer = document.querySelector('.lightbox-thumbs');
         thumbsContainer.innerHTML = '';
         galleryImages.forEach((src, idx) => {
@@ -867,7 +852,6 @@
         });
     }
 
-    // --- LÓGICA SWIPE (Deslizar dedo) ---
     function handleTouchStart(e) {
         touchStartX = e.changedTouches[0].screenX;
     }
@@ -878,16 +862,14 @@
     }
 
     function handleSwipe() {
-        // Umbral de sensibilidad (50px)
         if (touchEndX < touchStartX - 50) {
-            changeLightboxImage(1); // Deslizar izquierda -> Siguiente
+            changeLightboxImage(1);
         }
         if (touchEndX > touchStartX + 50) {
-            changeLightboxImage(-1); // Deslizar derecha -> Anterior
+            changeLightboxImage(-1);
         }
     }
 
-    // Teclado (PC)
     document.addEventListener('keydown', function(e) {
         const overlay = document.getElementById('lightbox-overlay');
         if (overlay && overlay.style.display === 'flex') {
@@ -896,7 +878,6 @@
             if (e.key === 'Escape') closeLightbox(null);
         }
     });
-    // Swipe en la imagen principal para cambiar entre fotos
     document.addEventListener('DOMContentLoaded', function() {
         let mainImgTouchStartX = 0;
         let mainImgTouchEndX = 0;
@@ -917,19 +898,16 @@
                 const currentIndex = thumbs.findIndex(t => t.classList.contains('border-primary'));
                 
                 if (mainImgTouchEndX < mainImgTouchStartX - 50) {
-                    // Swipe izquierda -> siguiente imagen
                     const nextIndex = (currentIndex + 1) % thumbs.length;
                     thumbs[nextIndex].click();
                 }
                 else if (mainImgTouchEndX > mainImgTouchStartX + 50) {
-                    // Swipe derecha -> imagen anterior
                     const prevIndex = currentIndex - 1 < 0 ? thumbs.length - 1 : currentIndex - 1;
                     thumbs[prevIndex].click();
                 }
             }
         }, {passive: true});
     });
-    // Deep linking - abrir modal automáticamente si hay slug en el contexto
     document.addEventListener('DOMContentLoaded', function() {
         const modalSlug = '{{ modal_open_slug|default:"" }}';
         if (modalSlug) {
@@ -938,27 +916,22 @@
         }
     });
 
-    // Cambiar URL cuando se abre el modal (sin recargar página)
     const originalAbrirModal = abrirModalPropiedad;
     window.abrirModalPropiedad = function(url) {
         originalAbrirModal(url);
         
-        // Extraer slug de la URL
         const slug = url.split('/').filter(Boolean).pop();
         const newUrl = `/propiedad/${slug}/`;
         
-        // Cambiar URL sin recargar
         history.pushState({modalOpen: true, slug: slug}, '', newUrl);
     };
 
-    // Restaurar URL cuando se cierra el modal
     document.getElementById('modalPropiedad').addEventListener('hidden.bs.modal', function() {
         if (window.location.pathname !== '/catalogo/') {
             history.pushState({}, '', '/catalogo/');
         }
     });
 
-    // Manejar botón atrás del navegador
     window.addEventListener('popstate', function(e) {
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalPropiedad'));
         if (modal) {
