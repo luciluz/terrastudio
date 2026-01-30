@@ -1,3 +1,4 @@
+import os
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
@@ -8,6 +9,8 @@ from django.contrib.sitemaps.views import sitemap
 from propiedades.sitemaps import PropiedadSitemap, StaticViewSitemap
 
 from django.http import HttpResponse
+
+ADMIN_URL = os.getenv('ADMIN_URL', 'admin/')
 
 def robots_txt(request):
     lines = [
@@ -25,7 +28,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_URL, admin.site.urls),
     
     path('', inicio, name='inicio'),
     path('nosotros/', nosotros, name='nosotros'),
