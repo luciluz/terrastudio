@@ -3,10 +3,13 @@
 
 {% block content %}
 
-<div class="position-relative w-100 overflow-hidden shadow mb-5" style="height: 600px;">
+<div class="position-relative w-100 overflow-hidden shadow mb-5" 
+     style="min-height: 85vh; display: flex; align-items: center;">
+    
     <div class="position-absolute top-0 start-0 w-100 h-100" 
-        style="background-image: url('{% static 'img/hero-bg.jpg' %}'); 
-                background-size: cover; background-position: center;">
+        style="background-image: url('{% static 'img/hero-bg.webp' %}'); 
+                background-size: cover; 
+                background-position: center 30%;">
     </div>
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, rgba(33, 37, 41, 0.6), rgba(33, 37, 41, 0.7));"></div>
 
