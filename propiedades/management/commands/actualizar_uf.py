@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from propiedades.models import Propiedad
 import requests
 from decimal import Decimal
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = 'Actualiza el precio en pesos de todas las propiedades según el valor UF del día'
@@ -41,10 +42,10 @@ class Command(BaseCommand):
             if prop.precio_pesos_referencia != nuevo_precio_pesos:
                 prop.precio_pesos_referencia = nuevo_precio_pesos
                 
-                # IMPORTANTE: Usamos update_fields para ser más eficientes y evitar
-                # disparar toda la lógica pesada del método save() original innecesariamente
-                # o loops infinitos de recálculo.
-                prop.save(update_fields=['precio_pesos_referencia', 'actualizado'])
+                Propiedad.objects.filter(pk=prop.pk).update(
+                    precio_pesos_referencia=nuevo_precio_pesos,
+                    actualizado=timezone.now()
+                )
                 contador += 1
                 self.stdout.write(f" > {prop.titulo}: Actualizado a ${nuevo_precio_pesos:,.0f}")
 
