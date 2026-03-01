@@ -5,48 +5,44 @@ from decimal import Decimal
 from django.utils import timezone
 
 class Command(BaseCommand):
-    help = 'Actualiza el precio en pesos de todas las propiedades según el valor UF del día'
+    help = 'Actualiza conversiones UF/CLP manteniendo el precio_lista original estático'
 
     def handle(self, *args, **kwargs):
         self.stdout.write("Consultando valor UF actual...")
-
-        # 1. Obtener valor UF del día (API Externa)
-        valor_uf_hoy = None
+        
         try:
             response = requests.get('https://mindicador.cl/api/uf', timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 valor_uf_hoy = Decimal(str(data['serie'][0]['valor']))
-                self.stdout.write(self.style.SUCCESS(f"Valor UF obtenido: ${valor_uf_hoy:,.2f}"))
+                self.stdout.write(self.style.SUCCESS(f"Valor UF: ${valor_uf_hoy:,.2f}"))
             else:
-                self.stdout.write(self.style.ERROR("Error al conectar con la API (Status no 200)"))
+                self.stdout.write(self.style.ERROR("Error HTTP en la API."))
+                return
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"Excepción al conectar con API: {e}"))
-
-        # Si falló la API, preguntamos si queremos usar un valor manual o cancelar
-        if not valor_uf_hoy:
-            self.stdout.write(self.style.WARNING("No se pudo obtener la UF de la API. No se realizarán cambios para evitar errores."))
+            self.stdout.write(self.style.ERROR(f"Error de conexión: {e}"))
             return
 
-        # 2. Recorrer las propiedades y actualizar
-        propiedades = Propiedad.objects.filter(precio_uf__isnull=False)
+        propiedades = Propiedad.objects.all()
         contador = 0
 
-        self.stdout.write(f"Procesando {propiedades.count()} propiedades...")
-
         for prop in propiedades:
-            # Calculamos el nuevo precio
-            nuevo_precio_pesos = int(prop.precio_uf * valor_uf_hoy)
-            
-            # Verificamos si cambió para no guardar "por las puras"
-            if prop.precio_pesos_referencia != nuevo_precio_pesos:
-                prop.precio_pesos_referencia = nuevo_precio_pesos
-                
-                Propiedad.objects.filter(pk=prop.pk).update(
-                    precio_pesos_referencia=nuevo_precio_pesos,
-                    actualizado=timezone.now()
-                )
-                contador += 1
-                self.stdout.write(f" > {prop.titulo}: Actualizado a ${nuevo_precio_pesos:,.0f}")
+            if prop.moneda == 'CLP':
+                # Mantiene el valor en pesos estático, recalcula la UF
+                nuevo_pesos = int(prop.precio_lista)
+                nueva_uf = (prop.precio_lista / valor_uf_hoy).quantize(Decimal('0.01'))
+            elif prop.moneda == 'UF':
+                # Mantiene el valor en UF estático, recalcula los pesos
+                nueva_uf = prop.precio_lista
+                nuevo_pesos = int(prop.precio_lista * valor_uf_hoy)
+            else:
+                continue
 
-        self.stdout.write(self.style.SUCCESS(f"¡Listo! Se actualizaron {contador} propiedades al valor UF de hoy."))
+            Propiedad.objects.filter(pk=prop.pk).update(
+                precio_pesos_referencia=nuevo_pesos,
+                precio_uf=nueva_uf,
+                actualizado=timezone.now()
+            )
+            contador += 1
+
+        self.stdout.write(self.style.SUCCESS(f"Operación completada. {contador} propiedades recalculadas desde su precio_lista original."))
